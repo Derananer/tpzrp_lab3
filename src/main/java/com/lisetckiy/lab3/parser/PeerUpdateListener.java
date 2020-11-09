@@ -35,18 +35,12 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
 
+import java.util.LinkedHashMap;
 import java.util.EventListener;
 
-public interface OutgoingListener extends EventListener{
-    /**
-     * Fired when the connection to the remote peer has been closed
-     */
-    public void connectionClosed();
-
-    /**
-     * Fired when a keep-alive message has been sent
-     */
-    public void keepAliveSent();
+public interface PeerUpdateListener extends EventListener{
+    public void updatePeerList(LinkedHashMap list);
+    public void updateFailed(int error, String message);
 }

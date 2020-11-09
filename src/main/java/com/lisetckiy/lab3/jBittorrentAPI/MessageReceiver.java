@@ -37,6 +37,8 @@
 
 package com.lisetckiy.lab3.jBittorrentAPI;
 
+import com.lisetckiy.lab3.parser.Message_PP;
+import com.lisetckiy.lab3.parser.PeerProtocol;
 import com.lisetckiy.lab3.parser.Utils;
 
 import java.io.*;

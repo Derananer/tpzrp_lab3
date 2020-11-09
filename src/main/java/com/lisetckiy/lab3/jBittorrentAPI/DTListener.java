@@ -37,6 +37,8 @@
 
 package com.lisetckiy.lab3.jBittorrentAPI;
 
+import com.lisetckiy.lab3.parser.DownloadTask;
+
 import java.util.EventListener;
 import java.util.BitSet;
 

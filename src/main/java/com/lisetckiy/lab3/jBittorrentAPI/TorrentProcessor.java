@@ -37,6 +37,7 @@
 
 package com.lisetckiy.lab3.jBittorrentAPI;
 
+import com.lisetckiy.lab3.parser.Constants;
 import com.lisetckiy.lab3.parser.Utils;
 
 import java.io.*;

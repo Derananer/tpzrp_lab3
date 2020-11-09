@@ -35,30 +35,29 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
+
+import com.lisetckiy.lab3.parser.Peer;
 
 import java.util.*;
 
 /**
- * Compares 2 peers download rate
- *
- * @author Baptiste Dubuis
- * @version 0.1
+ * Compares 2 peers upload rate
  */
-public class DLRateComparator implements Comparator {
+public class ULRateComparator implements Comparator {
     /**
      * Compares its two arguments for order.
      *
      * @param a the first object to be compared.
      * @param b the second object to be compared.
      * @return a negative integer, zero, or a positive integer as the first
-     *   argument is less than, equal to, or greater than the second.
+     * argument is less than, equal to, or greater than the second.
      */
     public int compare(Object a, Object b) {
         if (a instanceof Peer && b instanceof Peer)
-            if (((Peer) a).getDLRate(false) > ((Peer) b).getDLRate(false))
+            if (((Peer) a).getULRate(false) > ((Peer) b).getULRate(false))
                 return -1;
-            else if (((Peer) a).getDLRate(false) < ((Peer) b).getDLRate(false))
+            else if (((Peer) a).getULRate(false) < ((Peer) b).getULRate(false))
                 return 1;
         return 0;
     }

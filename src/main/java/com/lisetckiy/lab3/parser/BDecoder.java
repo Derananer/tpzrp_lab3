@@ -1,6 +1,5 @@
 package com.lisetckiy.lab3.parser;
 
-import com.lisetckiy.lab3.jBittorrentAPI.Constants;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -28,15 +27,19 @@ public class BDecoder {
         return ((Map) res);
     }
 
-//    private Map decode(ByteArrayInputStream data) throws IOException {
-//        Object res = decodeInputStream(data, 0);
-//        if (res == null) {
-//            throw (new IOException("BDecoder: zero length file"));
-//        } else if (!(res instanceof Map)) {
-//            throw (new IOException("BDecoder: top level isn't a Map"));
-//        }
-//        return ((Map) res);
-//    }
+    public static Map decodeS(BufferedInputStream data) throws IOException {
+        return new BDecoder().decodeStream(data);
+    }
+
+    private Map decode(ByteArrayInputStream data) throws IOException {
+        Object res = decodeInputStream(data, 0);
+        if (res == null) {
+            throw (new IOException("BDecoder: zero length file"));
+        } else if (!(res instanceof Map)) {
+            throw (new IOException("BDecoder: top level isn't a Map"));
+        }
+        return ((Map) res);
+    }
 
     private Object decodeInputStream(InputStream bais, int nesting) throws IOException {
         if (nesting == 0 && !bais.markSupported()) {

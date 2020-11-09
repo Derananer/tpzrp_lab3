@@ -35,28 +35,15 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
 
-import java.util.*;
+import java.util.EventListener;
+import java.net.Socket;
 
-/**
- * Compares 2 peers upload rate
- */
-public class ULRateComparator implements Comparator {
+public interface ConListenerInterface extends EventListener{
     /**
-     * Compares its two arguments for order.
-     *
-     * @param a the first object to be compared.
-     * @param b the second object to be compared.
-     * @return a negative integer, zero, or a positive integer as the first
-     * argument is less than, equal to, or greater than the second.
+     * Method called when a new connection is accepted and bound to the given socket
+     * @param s Socket
      */
-    public int compare(Object a, Object b) {
-        if (a instanceof Peer && b instanceof Peer)
-            if (((Peer) a).getULRate(false) > ((Peer) b).getULRate(false))
-                return -1;
-            else if (((Peer) a).getULRate(false) < ((Peer) b).getULRate(false))
-                return 1;
-        return 0;
-    }
+    public void connectionAccepted(Socket s);
 }

@@ -11,9 +11,11 @@ class Lab3ApplicationTests {
 	@Autowired
 	private TorrentDownloadManager torrentDownloadManager;
 
+	private static String FILENAME = "ubuntu-16.04.7-desktop-amd64.iso.torrent";
+
 	@Test
 	void contextLoads() {
-		torrentDownloadManager.parseFile();
+		torrentDownloadManager.downloadFile(FILENAME);
 	}
 
 }

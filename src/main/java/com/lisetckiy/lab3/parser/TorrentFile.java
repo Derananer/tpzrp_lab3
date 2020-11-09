@@ -53,36 +53,29 @@ public class TorrentFile {
         info_hash_as_hex = new String();
     }
 
-    /**
-     * Print the torrent information in a readable manner.
-     * @param detailed Choose if we want a detailed output or not. Detailed
-     * output prints the comment, the files list and the pieces hashes while the
-     * standard output simply prints tracker url, creator, creation date and
-     * info hash
-     */
-    public void printData(boolean detailed) {
-        System.out.println("Tracker URL: " + this.announceURL);
-        System.out.println("Torrent created by : " + this.createdBy);
-        System.out.println("Torrent creation date : " + new Date(this.creationDate));
-        System.out.println("Info hash :\n");
-        System.out.println("\t\t" + new String(this.info_hash_as_binary));
-        System.out.println("\t\t" + this.info_hash_as_hex);
-        System.out.println("\t\t" + this.info_hash_as_url);
-        if(detailed){
-            System.out.println("Comment :" + this.comment);
-            System.out.println("\nFiles List :\n");
-            for (int i = 0; i < this.length.size(); i++)
-                System.out.println("\t- " + this.name.get(i) + " ( " + this.length.get(i) + " Bytes )");
-            System.out.println("\n");
-            System.out.println("Pieces hashes (piece length = " + this.pieceLength + ") :\n");
-            for (int i = 0; i < this.piece_hash_values_as_binary.size(); i++) {
-                System.out.println((i + 1) + ":\t\t" + this.piece_hash_values_as_binary.get(i));
-                System.out.println("\t\t" + this.piece_hash_values_as_hex.get(i));
-                System.out.println("\t\t" + this.piece_hash_values_as_url.get(i));
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Tracker URL: ").append(this.announceURL).append("\n");
+        stringBuilder.append("Torrent created by : ").append(this.createdBy).append("\n");
+        stringBuilder.append("Torrent creation date : ").append(new Date(this.creationDate)).append("\n");
+        stringBuilder.append("Info hashes: ");
+//        stringBuilder.append("\t\t").append(new String(this.info_hash_as_binary));
+        stringBuilder.append("hexFormat: ").append(this.info_hash_as_hex);
+        stringBuilder.append(" urlFormat: ").append(this.info_hash_as_url);
+        stringBuilder.append("\n").append("Comment :").append(this.comment).append("\n");
+        stringBuilder.append("Files List :\n");
+        for (int i = 0; i < this.length.size(); i++)
+            stringBuilder.append("\t- ").append(this.name.get(i)).append(" ( ").append(this.length.get(i)).append(" Bytes )").append("\n");
+        stringBuilder.append("\n");
+        stringBuilder.append("Pieces hashes (piece length = ").append(this.pieceLength).append(") :\n");
+        for (int i = 0; i < this.piece_hash_values_as_binary.size(); i++) {
+            stringBuilder.append(i + 1);
+//                    .append(":\t\t").append(this.piece_hash_values_as_binary.get(i));
+            stringBuilder.append("\t\t").append(this.piece_hash_values_as_hex.get(i)).append("\n");
+//            stringBuilder.append("\t\t").append(this.piece_hash_values_as_url.get(i));
 
-            }
         }
-
+        return stringBuilder.toString();
     }
 
 }

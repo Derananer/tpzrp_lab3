@@ -35,7 +35,7 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
 
 import java.io.IOException;
 import java.net.ServerSocket;

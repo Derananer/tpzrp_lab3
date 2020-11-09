@@ -35,9 +35,9 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
 
-import com.lisetckiy.lab3.parser.Utils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import javax.swing.event.EventListenerList;
@@ -56,6 +56,7 @@ import java.net.URLConnection;
  * @author Baptiste Dubuis
  * @version 0.1
  */
+@Slf4j
 public class PeerUpdater extends Thread {
     private LinkedHashMap<String, Peer> peerList;
     private byte[] id;
@@ -335,8 +336,8 @@ public class PeerUpdater extends Thread {
                                  Utils.byteArrayToURLString(id) + "&port="+
                                 this.listeningPort +
                                  "&downloaded=" + dl + "&uploaded=" + ul +
-                                 "&left=" +
-                                 left + "&numwant=100&compact=1" + event);
+                                 "&left=" + left
+                    + "&numwant=100&compact=1" + event);
             System.out.println("Contact Tracker. URL source = " + source);   //DAVID
             URLConnection uc = source.openConnection();
             InputStream is = uc.getInputStream();
@@ -344,15 +345,15 @@ public class PeerUpdater extends Thread {
             BufferedInputStream bis = new BufferedInputStream(is);
 
             // Decode the tracker bencoded response
-            Map m = BDecoder.decode(bis);
+            Map m = BDecoder.decodeS(bis);
             System.out.println(m);
             bis.close();
             is.close();
 
             return m;
         } catch (MalformedURLException murle) {
-            this.fireUpdateFailed(2,
-                                  "Tracker URL is not valid... Check if your data is correct and try again");
+            log.error(murle.getMessage(), murle.getCause());
+            this.fireUpdateFailed(2, "Tracker URL is not valid... Check if your data is correct and try again");
         } catch (UnknownHostException uhe) {
             this.fireUpdateFailed(3, "Tracker not available... Retrying...");
         } catch (IOException ioe) {

@@ -35,9 +35,9 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
 
-import com.lisetckiy.lab3.parser.Utils;
+import com.lisetckiy.lab3.jBittorrentAPI.*;
 
 import java.io.*;
 import java.util.*;
@@ -48,8 +48,7 @@ import javax.swing.event.EventListenerList;
  * Class representing a task that downloads pieces from a remote peer
  *
  */
-public class DownloadTask extends Thread implements IncomingListener,
-        OutgoingListener {
+public class DownloadTask extends Thread implements IncomingListener, OutgoingListener {
 
     private static final int IDLE = 0;
     private static final int WAIT_HS = 1;
@@ -164,8 +163,7 @@ public class DownloadTask extends Thread implements IncomingListener,
      */
     public void initConnection() throws UnknownHostException, IOException {
         if (this.peerConnection == null && !this.peer.isConnected()) {
-            this.peerConnection = new Socket(this.peer.getIP(),
-                                             this.peer.getPort());
+            this.peerConnection = new Socket(this.peer.getIP(), this.peer.getPort());
             this.os = this.peerConnection.getOutputStream();
             this.is = this.peerConnection.getInputStream();
             this.peer.setConnected(true);

@@ -1,5 +1,7 @@
 package com.lisetckiy.lab3.parser;
 
+import com.lisetckiy.lab3.jBittorrentAPI.DTListener;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,7 +9,7 @@ import java.io.RandomAccessFile;
 import java.net.Socket;
 import java.util.*;
 
-public class DownloadManager {
+public class DownloadManager implements DTListener, PeerUpdateListener, ConListenerInterface {
 
     // Client ID
     private byte[] clientID;
@@ -233,7 +235,7 @@ public class DownloadManager {
                 iterator(); it.hasNext(); ) {
             try {
                 Integer file = (Integer) (it.next());
-                int remaining = ((Integer) this.torrent.length.get(file.intValue())).intValue() - ((Integer) (this.pieceList[piece].getFileAndOffset().get(file))).intValue();
+                int remaining = (Integer) this.torrent.length.get(file.intValue()) - ((Integer) (this.pieceList[piece].getFileAndOffset().get(file))).intValue();
                 this.output_files[file.intValue()].seek(((Integer) (this.pieceList[piece].getFileAndOffset().get(file))).intValue());
                 this.output_files[file.intValue()].write(data, data.length - remainingData, (remaining < remainingData) ? remaining : remainingData);
                 remainingData -= remaining;

@@ -35,15 +35,18 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
 
 import java.util.EventListener;
-import java.net.Socket;
 
-public interface ConListenerInterface extends EventListener{
+public interface OutgoingListener extends EventListener{
     /**
-     * Method called when a new connection is accepted and bound to the given socket
-     * @param s Socket
+     * Fired when the connection to the remote peer has been closed
      */
-    public void connectionAccepted(Socket s);
+    public void connectionClosed();
+
+    /**
+     * Fired when a keep-alive message has been sent
+     */
+    public void keepAliveSent();
 }

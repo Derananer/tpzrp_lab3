@@ -37,10 +37,13 @@
 
 package com.lisetckiy.lab3.jBittorrentAPI;
 
+import com.lisetckiy.lab3.parser.Message_PP;
+import com.lisetckiy.lab3.parser.OutgoingListener;
+import com.lisetckiy.lab3.parser.PeerProtocol;
+
 import java.io.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.io.OutputStream;
 import javax.swing.event.EventListenerList;
 
