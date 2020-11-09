@@ -37,11 +37,6 @@
 
 package com.lisetckiy.lab3.parser;
 
-import com.lisetckiy.lab3.jBittorrentAPI.Bits;
-import com.lisetckiy.lab3.jBittorrentAPI.Message;
-import com.lisetckiy.lab3.parser.PeerProtocol;
-import com.lisetckiy.lab3.parser.Utils;
-
 /**
  *
  * Represent a Peer Protocol message according to Bittorrent protocol specifications.

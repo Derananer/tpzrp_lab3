@@ -35,25 +35,33 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
-
-import com.lisetckiy.lab3.parser.DownloadTask;
-
-import java.util.EventListener;
-import java.util.BitSet;
+package com.lisetckiy.lab3.parser;
 
 /**
- * Interface for managing events launched by the DownloadTask class
- *
- * @author Baptiste Dubuis
- * @version 0.1
+ * Represent the general structure of a protocol message. It must have a type.
  */
-public interface DTListener extends EventListener{
-    public void pieceCompleted(String peerID, int pieceNB, boolean complete);
-    public void pieceRequested(int pieceNB, boolean requested);
-    public void taskCompleted(String id, int reason);
-    public void peerAvailability(String id, BitSet hasPiece);
-    public void peerReady(String id);
-    public void peerRequest(String peerID,int piece, int begin, int length);
-    public void addActiveTask(String id, DownloadTask dt);
+abstract public class Message {
+    protected int type;
+    private int priority = 0;
+
+    public Message(){}
+
+    public Message(int type){
+        this(type, 0);
+    }
+
+    public Message(int type, int priority){
+        this.type = type;
+        this.priority = priority;
+    }
+
+    public int getPriority(){
+        return this.priority;
+    }
+
+    public int getType(){
+        return this.type;
+    }
+
+    abstract public byte[] generate();
 }

@@ -1,7 +1,5 @@
 package com.lisetckiy.lab3.parser;
 
-import com.lisetckiy.lab3.jBittorrentAPI.DTListener;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

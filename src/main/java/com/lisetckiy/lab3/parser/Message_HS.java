@@ -35,8 +35,9 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
 
+import com.lisetckiy.lab3.parser.Message;
 import com.lisetckiy.lab3.parser.Utils;
 
 /**

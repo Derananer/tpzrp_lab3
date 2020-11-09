@@ -35,33 +35,41 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.jBittorrentAPI;
+package com.lisetckiy.lab3.parser;
+
+import java.io.*;
+import java.util.*;
 
 /**
- * Represent the general structure of a protocol message. It must have a type.
+ * Utility class to output information to a file
+ *
+ * @author Baptiste Dubuis
+ * @version 0.1
  */
-abstract public class Message {
-    protected int type;
-    private int priority = 0;
+public class LogManager {
+    private String filename;
+    private OutputStream os;
+    public FileWriter fw;
 
-    public Message(){}
-
-    public Message(int type){
-        this(type, 0);
+    public LogManager(String logfile) {
+        this.filename = logfile;
     }
 
-    public Message(int type, int priority){
-        this.type = type;
-        this.priority = priority;
+    /**
+     * Write the given string to the file corresponding to this manager
+     * @param s String
+     */
+    synchronized public void writeLog(String s){
+        try{
+            this.fw = new FileWriter(this.filename, true);
+            Date d = new Date();
+
+            this.fw.write(d+" : "+s+"\r\n");
+            this.fw.flush();
+            this.fw.close();
+        }catch(Exception e){
+            System.out.println("Not able to write to log file");
+        }
     }
 
-    public int getPriority(){
-        return this.priority;
-    }
-
-    public int getType(){
-        return this.type;
-    }
-
-    abstract public byte[] generate();
 }

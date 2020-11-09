@@ -37,8 +37,6 @@
 
 package com.lisetckiy.lab3.parser;
 
-import com.lisetckiy.lab3.jBittorrentAPI.*;
-
 import java.io.*;
 import java.util.*;
 import java.net.*;
