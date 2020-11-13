@@ -1,6 +1,5 @@
 package com.lisetckiy.lab3;
 
-import com.lisetckiy.lab3.newpack.TorrentDownloadServiceNew;
 import com.lisetckiy.lab3.parser.TorrentDownloadService;
 import com.lisetckiy.lab3.parser.TorrentFile;
 import com.lisetckiy.lab3.parser.TorrentFileBuilder;
