@@ -63,18 +63,19 @@ public class TorrentFile {
         stringBuilder.append("hexFormat: ").append(this.info_hash_as_hex);
         stringBuilder.append(" urlFormat: ").append(this.info_hash_as_url);
         stringBuilder.append("\n").append("Comment :").append(this.comment).append("\n");
-        stringBuilder.append("Files List :\n");
+        stringBuilder.append("Files(").append(this.length.size()).append(") List :\n");
         for (int i = 0; i < this.length.size(); i++)
             stringBuilder.append("\t- ").append(this.name.get(i)).append(" ( ").append(this.length.get(i)).append(" Bytes )").append("\n");
         stringBuilder.append("\n");
-        stringBuilder.append("Pieces hashes (piece length = ").append(this.pieceLength).append(") :\n");
-        for (int i = 0; i < this.piece_hash_values_as_binary.size(); i++) {
-            stringBuilder.append(i + 1);
+        stringBuilder.append("Pieces hashes (piece length = ").append(this.pieceLength);
+//        stringBuilder.append(") :\n");
+//        for (int i = 0; i < this.piece_hash_values_as_binary.size(); i++) {
+//            stringBuilder.append(i + 1);
 //                    .append(":\t\t").append(this.piece_hash_values_as_binary.get(i));
-            stringBuilder.append("\t\t").append(this.piece_hash_values_as_hex.get(i)).append("\n");
+//            stringBuilder.append("\t\t").append(this.piece_hash_values_as_hex.get(i)).append("\n");
 //            stringBuilder.append("\t\t").append(this.piece_hash_values_as_url.get(i));
 
-        }
+//        }
         return stringBuilder.toString();
     }
 

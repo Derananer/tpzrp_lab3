@@ -179,6 +179,7 @@ public class Message_PP extends Message {
 
         int length = Utils.byteArrayToInt(this.length);
         toString += "<length=" + length + ">";
+        toString += "<type=" + PeerProtocol.TYPE[type] + ">";
         if (length > 0) {
             toString += "<id=" + (int)this.id[0] + ">";
             if (length > 1) {

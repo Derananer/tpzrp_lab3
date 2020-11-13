@@ -37,6 +37,8 @@
 
 package com.lisetckiy.lab3.parser;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.util.*;
 
@@ -46,6 +48,7 @@ import java.util.*;
  * @author Baptiste Dubuis
  * @version 0.1
  */
+@Slf4j
 public class LogManager {
     private String filename;
     private OutputStream os;
@@ -68,7 +71,7 @@ public class LogManager {
             this.fw.flush();
             this.fw.close();
         }catch(Exception e){
-            System.out.println("Not able to write to log file");
+            log.info("Not able to write to log file");
         }
     }
 

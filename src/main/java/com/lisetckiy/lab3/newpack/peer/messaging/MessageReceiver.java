@@ -1,49 +1,13 @@
-/*
- * Java Bittorrent API as its name indicates is a JAVA API that implements the Bittorrent Protocol
- * This project contains two packages:
- * 1. jBittorrentAPI is the "client" part, i.e. it implements all classes needed to publish
- *    files, share them and download them.
- *    This package also contains example classes on how a developer could create new applications.
- * 2. trackerBT is the "tracker" part, i.e. it implements a all classes needed to run
- *    a Bittorrent tracker that coordinates peers exchanges. *
- *
- * Copyright (C) 2007 Baptiste Dubuis, Artificial Intelligence Laboratory, EPFL
- *
- * This file is part of jbittorrentapi-v1.0.zip
- *
- * Java Bittorrent API is free software and a free user study set-up;
- * you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * Java Bittorrent API is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Java Bittorrent API; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * @version 1.0
- * @author Baptiste Dubuis
- * To contact the author:
- * email: baptiste.dubuis@gmail.com
- *
- * More information about Java Bittorrent API:
- *    http://sourceforge.net/projects/bitext/
- */
+package com.lisetckiy.lab3.newpack.peer.messaging;
 
-package com.lisetckiy.lab3.parser;
-
-import com.lisetckiy.lab3.parser.Message_PP;
+import com.lisetckiy.lab3.newpack.peer.PeerConnector;
 import com.lisetckiy.lab3.parser.PeerProtocol;
 import com.lisetckiy.lab3.parser.Utils;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
-import javax.swing.event.EventListenerList;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Thread created to listen for incoming message from remote peers. When data is read,
@@ -57,30 +21,34 @@ public class MessageReceiver extends Thread {
     private InputStream is = null;
     private DataInputStream dis = null;
     private boolean hsOK = false;
-    private final EventListenerList listeners = new EventListenerList();
+    private final PeerConnector listener;
+//    private final EventListenerList listeners = new EventListenerList();
 
     /**
      * Create a new Message receiver for a given peer
-     * @param id The id of the peer that has been assigned this receiver
-     * @param is InputStream
+     *
+     * @param id       The id of the peer that has been assigned this receiver
+     * @param is       InputStream
+     * @param listener
      * @throws IOException
      */
-    public MessageReceiver(String id, InputStream is) throws IOException {
-        this.setName("MR_" + id);
+    public MessageReceiver(String id, InputStream is, PeerConnector listener) throws IOException {
+        //this.setName("MR_" + id);
         this.is = is;
         this.dis = new DataInputStream(is);
+        this.listener = listener;
     }
 
     /**
      * Reads bytes from the DataInputStream
+     *
      * @param data byte[]
      * @return int
-     *
      */
-    private int read(byte[] data){
-        try{
+    private int read(byte[] data) {
+        try {
             this.dis.readFully(data);
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             return -1;
         }
         return data.length;
@@ -88,17 +56,18 @@ public class MessageReceiver extends Thread {
 
     /**
      * Reads bytes from theInputStream
+     *
      * @param data byte[]
      * @return int
      * @throws IOException
      * @throws InterruptedException
      * @deprecated
      */
-    private int read2(byte[] data)throws IOException, InterruptedException{
+    private int read2(byte[] data) throws IOException, InterruptedException {
         int totalread = 0;
         int read = 0;
-        while(totalread != data.length){
-            if((read = this.is.read(data, totalread, data.length - totalread)) == -1)
+        while (totalread != data.length) {
+            if ((read = this.is.read(data, totalread, data.length - totalread)) == -1)
                 return -1;
             totalread += read;
             this.sleep(50);
@@ -109,6 +78,7 @@ public class MessageReceiver extends Thread {
     /**
      * Reads bytes from the input stream. This read method read exactly the number of
      * bytes corresponding to the length of the byte array given in parameter
+     *
      * @param data byte[]
      * @return int
      * @throws IOException
@@ -127,7 +97,7 @@ public class MessageReceiver extends Thread {
             if (available < l - i) {
                 loop++;
                 byte[] temp = new byte[available];
-                if (is.read(temp) == -1){
+                if (is.read(temp) == -1) {
                     return -1;
                 }
                 payload = Utils.concat(payload, temp);
@@ -135,7 +105,7 @@ public class MessageReceiver extends Thread {
                 this.sleep(10);
             } else {
                 byte[] temp = new byte[l - i];
-                if (is.read(temp) == -1){
+                if (is.read(temp) == -1) {
                     return -1;
                 }
                 payload = Utils.concat(payload, temp);
@@ -160,14 +130,21 @@ public class MessageReceiver extends Thread {
         byte[] fileID = new byte[20];
         byte[] peerID = new byte[20];
         byte[] length = new byte[4];
-        Message_HS hs = new Message_HS();
-        Message_PP mess = new Message_PP();
+        HandshakeMessage hs = null;
+//        Message_HS hs = new Message_HS();
+        PeerProtocolMessage mess = new PeerProtocolMessage();
 
         while (this.run) {
             int l = 1664;
             try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
                 if (!hsOK) {
-                    //log.info("Wait for hs");
+                    //System.out.println("Wait for hs");
+
                     if ((read = this.read(lengthHS)) > 0) {
                         for (int i = 0; i < 19; i++)
                             protocol[i] = (byte) is.read();
@@ -178,9 +155,9 @@ public class MessageReceiver extends Thread {
                         for (int i = 0; i < 20; i++)
                             peerID[i] = (byte) is.read();
 
-                        hs.setData(lengthHS, protocol, reserved,
-                                           fileID, peerID);
-                        //this.hsOK = true;
+                        hs = new HandshakeMessage(lengthHS, protocol, reserved, fileID, peerID);
+                        log.info("Handshake message received {}", hs);
+                        this.hsOK = true;
                     } else {
                         hs = null;
                     }
@@ -192,10 +169,10 @@ public class MessageReceiver extends Thread {
                             mess.setData(PeerProtocol.KEEP_ALIVE);
                         } else {
                             id = is.read();
-                            if(id == -1){
-                                System.err.println("id");
+                            if (id == -1) {
+//                                System.err.println("id");
                                 mess = null;
-                            }else{
+                            } else {
                                 if (l == 1)
                                     mess.setData(id + 1);
                                 else {
@@ -212,61 +189,54 @@ public class MessageReceiver extends Thread {
                     }
                 }
             } catch (IOException ioe) {
+                log.error(ioe.getMessage(), ioe);
 //                ioe.printStackTrace();
-                log.error(ioe.getMessage(), ioe.getMessage());
-                this.fireMessageReceived(null);
+//                this.fireMessageReceived(null);
                 return;
                 // m = null;
-            } /*catch (InterruptedException ie) {
-                this.fireMessageReceived(null);
-                return;
-                // m = null;
-            } */catch (Exception e) {
-                System.err.println(l+"Error in MessageReceiver..."+e.getMessage()
-                        +" " + e.toString());
-                this.fireMessageReceived(null);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+//                System.err.println(l+"Error in MessageReceiver..."+e.getMessage() +" " + e.toString());
+//                this.fireMessageReceived(null);
                 return;
                 // m = null;
             }
-
-            if(!this.hsOK){
+            if (!this.hsOK) {
                 this.fireMessageReceived(hs);
                 this.hsOK = true;
-            }else{
+            } else {
                 this.fireMessageReceived(mess);
             }
             // m = null;
         }
-        try{
+        try {
             this.dis.close();
             this.dis = null;
-        }catch(Exception e){}
-
-    }
-
-    public void addIncomingListener(IncomingListener listener) {
-        listeners.add(IncomingListener.class, listener);
-    }
-
-    public void removeIncomingListener(IncomingListener listener) {
-        listeners.remove(IncomingListener.class, listener);
-    }
-
-    public IncomingListener[] getIncomingListeners() {
-        return listeners.getListeners(IncomingListener.class);
-    }
-
-    protected void fireMessageReceived(Message m) {
-        log.trace("Message received {}", m);
-        for (IncomingListener listener : getIncomingListeners()) {
-            listener.messageReceived(m);
+        } catch (Exception e) {
         }
+
+    }
+
+    //    public void addIncomingListener(IncomingListener listener) {
+//        listeners.add(IncomingListener.class, listener);
+//    }
+//
+//    public void removeIncomingListener(IncomingListener listener) {
+//        listeners.remove(IncomingListener.class, listener);
+//    }
+//
+//    public IncomingListener[] getIncomingListeners() {
+//        return listeners.getListeners(IncomingListener.class);
+//    }
+//
+    private void fireMessageReceived(Message message) {
+        listener.messageReceived(message);
     }
 
     /**
      * Stops the current thread by completing the run() method
      */
-    public void stopThread(){
+    public void stopThread() {
         this.run = false;
     }
 }

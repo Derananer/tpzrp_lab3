@@ -41,6 +41,7 @@ import com.lisetckiy.lab3.parser.Message;
 import com.lisetckiy.lab3.parser.Message_PP;
 import com.lisetckiy.lab3.parser.OutgoingListener;
 import com.lisetckiy.lab3.parser.PeerProtocol;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +53,7 @@ import javax.swing.event.EventListenerList;
  * Thread created to send message to the remote peer. Hold a queue for outgoing
  * messages
  */
+@Slf4j
 public class MessageSender extends Thread {
     private OutputStream os = null;
     private LinkedBlockingQueue<Message> outgoingMessage = null;
@@ -61,7 +63,7 @@ public class MessageSender extends Thread {
 
 
     public MessageSender(String id, OutputStream os) {
-        //this.setName("MS_"+id);
+        this.setName("MS_"+id);
         this.os = os;
         this.outgoingMessage = new LinkedBlockingQueue<Message>();
     }
@@ -103,7 +105,8 @@ public class MessageSender extends Thread {
      * Puts the message in parameter in the queue, waiting to be sent
      * @param m Message
      */
-    public synchronized void addMessageToQueue(Message m){
+    public synchronized void  addMessageToQueue(Message m){
+        log.trace("Add message[{}]", m);
         this.outgoingMessage.add(m);
         this.lmst = System.currentTimeMillis();
         //this.notify();

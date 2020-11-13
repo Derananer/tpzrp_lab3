@@ -86,12 +86,13 @@ public class PeerUpdater extends Thread {
         //this.start();
     }
 
-    public void setListeningPort(int port){
+    public void setListeningPort(int port) {
         this.listeningPort = port;
     }
 
     /**
      * Returns the last interval for updates received from the tracker
+     *
      * @return int
      */
     public int getInterval() {
@@ -100,6 +101,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Returns the last minimal interval for updates received from the tracker
+     *
      * @return int
      */
 
@@ -109,6 +111,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Returns the number of bytes that have been downloaded so far
+     *
      * @return int
      */
 
@@ -118,6 +121,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Returns the number of bytes that have been uploaded so far
+     *
      * @return int
      */
 
@@ -127,6 +131,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Returns the number of bytes still to download to complete task
+     *
      * @return int
      */
 
@@ -136,6 +141,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Returns the current event of the client
+     *
      * @return int
      */
 
@@ -145,6 +151,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Sets the interval between tracker update
+     *
      * @param interval int
      */
     public void setInterval(int interval) {
@@ -153,6 +160,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Sets the mininterval between tracker update
+     *
      * @param minInt int
      */
     public void setMinInterval(int minInt) {
@@ -161,6 +169,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Sets the # of bytes downloaded so far
+     *
      * @param dl long
      */
 
@@ -170,6 +179,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Sets the # of bytes uploaded so far
+     *
      * @param ul long
      */
     public void setUploaded(long ul) {
@@ -178,6 +188,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Sets the # of bytes still to download
+     *
      * @param left long
      */
     public void setLeft(long left) {
@@ -186,6 +197,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Sets the current state of the client
+     *
      * @param event String
      */
     public void setEvent(String event) {
@@ -194,6 +206,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Returns the list of peers in its current state
+     *
      * @return LinkedHashMap
      */
     public LinkedHashMap getList() {
@@ -202,8 +215,9 @@ public class PeerUpdater extends Thread {
 
     /**
      * Update the parameters for future tracker communication
-     * @param dl int
-     * @param ul int
+     *
+     * @param dl    int
+     * @param ul    int
      * @param event String
      */
     public synchronized void updateParameters(int dl, int ul, String event) {
@@ -227,7 +241,8 @@ public class PeerUpdater extends Thread {
             this.peerList = this.processResponse(this.contactTracker(id,
                     torrent, this.downloaded,
                     this.uploaded,
-                    this.left, this.event));
+                    this.left, this.event)
+            );
             if (peerList != null) {
                 if (first) {
                     this.event = "";
@@ -239,13 +254,17 @@ public class PeerUpdater extends Thread {
                     synchronized (b) {
                         b.wait(interval * 1000);
                     }
-                } catch (InterruptedException ie) {}
+                } catch (InterruptedException ie) {
+                    log.error(ie.getMessage(), ie);
+                }
             } else {
                 try {
                     synchronized (b) {
                         b.wait(2000);
                     }
-                } catch (InterruptedException ie) {}
+                } catch (InterruptedException ie) {
+                    log.error(ie.getMessage(), ie);
+                }
             }
         }
     }
@@ -254,6 +273,7 @@ public class PeerUpdater extends Thread {
      * Process the map representing the tracker response, which should contain
      * either an error message or the peers list and other information such as
      * the interval before next update, aso
+     *
      * @param m The tracker response as a Map
      * @return LinkedHashMap A HashMap containing the peers and their ID as keys
      */
@@ -261,12 +281,7 @@ public class PeerUpdater extends Thread {
         LinkedHashMap<String, Peer> l = null;
         if (m != null) {
             if (m.containsKey("failure reason")) {
-                this.fireUpdateFailed(0,
-                                      "The tracker returns the following error message:" +
-                                      "\t'" +
-                                      new String((byte[]) m.get(
-                                              "failure reason")) +
-                                      "'");
+                this.fireUpdateFailed(0, "The tracker returns the following error message:" + "\t'" + new String((byte[]) m.get("failure reason")) + "'");
                 return null;
             } else {
                 if (((Long) m.get("interval")).intValue() < this.interval)
@@ -281,18 +296,9 @@ public class PeerUpdater extends Thread {
                     peerList.addAll((List) peers);
                     if (peerList != null && peerList.size() > 0) {
                         for (int i = 0; i < peerList.size(); i++) {
-                            String peerID = new String((byte[]) ((Map) (
-                                    peerList.
-                                    get(i))).
-                                    get(
-                                            "peer_id"));
-                            String ipAddress = new String((byte[]) ((Map) (
-                                    peerList.
-                                    get(
-                                            i))).
-                                    get("ip"));
-                            int port = ((Long) ((Map) (peerList.get(i))).get(
-                                    "port")).intValue();
+                            String peerID = new String((byte[]) ((Map) (peerList.get(i))).get("peer_id"));
+                            String ipAddress = new String((byte[]) ((Map) (peerList.get(i))).get("ip"));
+                            int port = ((Long) ((Map) (peerList.get(i))).get("port")).intValue();
                             Peer p = new Peer(peerID, ipAddress, port);
                             l.put(p.toString(), p);
                         }
@@ -302,11 +308,10 @@ public class PeerUpdater extends Thread {
                     for (int i = 0; i < p.length; i += 6) {
                         Peer peer = new Peer();
                         peer.setIP(Utils.byteToUnsignedInt(p[i]) + "." +
-                                   Utils.byteToUnsignedInt(p[i + 1]) + "." +
-                                   Utils.byteToUnsignedInt(p[i + 2]) + "." +
-                                   Utils.byteToUnsignedInt(p[i + 3]));
-                        peer.setPort(Utils.byteArrayToInt(Utils.subArray(p,
-                                i + 4, 2)));
+                                Utils.byteToUnsignedInt(p[i + 1]) + "." +
+                                Utils.byteToUnsignedInt(p[i + 2]) + "." +
+                                Utils.byteToUnsignedInt(p[i + 3]));
+                        peer.setPort(Utils.byteArrayToInt(Utils.subArray(p, i + 4, 2)));
                         l.put(peer.toString(), peer);
                     }
                 }
@@ -319,26 +324,25 @@ public class PeerUpdater extends Thread {
     /**
      * Contact the tracker according to the HTTP/HTTPS tracker protocol and using
      * the information in the TorrentFile.
-     * @param id byte[]
-     * @param t TorrentFile
-     * @param dl long
-     * @param ul long
-     * @param left long
+     *
+     * @param id    byte[]
+     * @param t     TorrentFile
+     * @param dl    long
+     * @param ul    long
+     * @param left  long
      * @param event String
      * @return A Map containing the decoded tracker response
      */
-    public synchronized Map contactTracker(byte[] id,
-                                           TorrentFile t, long dl, long ul,
-                                           long left, String event) {
+    public synchronized Map contactTracker(byte[] id, TorrentFile t, long dl, long ul, long left, String event) {
         try {
             URL source = new URL(t.announceURL + "?info_hash=" +
-                                 t.info_hash_as_url + "&peer_id=" +
-                                 Utils.byteArrayToURLString(id) + "&port="+
-                                this.listeningPort +
-                                 "&downloaded=" + dl + "&uploaded=" + ul +
-                                 "&left=" + left
-                    + "&numwant=100&compact=1" + event);
-            System.out.println("Contact Tracker. URL source = " + source);   //DAVID
+                    t.info_hash_as_url + "&peer_id=" +
+                    Utils.byteArrayToURLString(id) + "&port=" +
+                    this.listeningPort +
+                    "&downloaded=" + dl + "&uploaded=" + ul +
+                    "&left=" + left +
+                    "&numwant=100&compact=1" + event);
+            log.info("Contact Tracker. URL source = " + source);   //DAVID
             URLConnection uc = source.openConnection();
             InputStream is = uc.getInputStream();
 
@@ -346,7 +350,7 @@ public class PeerUpdater extends Thread {
 
             // Decode the tracker bencoded response
             Map m = BDecoder.decodeS(bis);
-            System.out.println(m);
+            log.info(m.toString());
             bis.close();
             is.close();
 
@@ -355,6 +359,7 @@ public class PeerUpdater extends Thread {
             log.error(murle.getMessage(), murle.getCause());
             this.fireUpdateFailed(2, "Tracker URL is not valid... Check if your data is correct and try again");
         } catch (UnknownHostException uhe) {
+            log.error(uhe.getMessage(), uhe.getCause());
             this.fireUpdateFailed(3, "Tracker not available... Retrying...");
         } catch (IOException ioe) {
             this.fireUpdateFailed(4, "Tracker unreachable... Retrying");
@@ -373,12 +378,13 @@ public class PeerUpdater extends Thread {
         this.event = "&event=stopped";
         this.end = true;
         this.contactTracker(this.id, this.torrent, this.downloaded,
-                            this.uploaded, this.left, "&event=stopped");
+                this.uploaded, this.left, "&event=stopped");
     }
 
     /**
      * Adds a PeerUpdateListener to the list of listeners, enabling communication
      * with this object
+     *
      * @param listener PeerUpdateListener
      */
     public void addPeerUpdateListener(PeerUpdateListener listener) {
@@ -387,6 +393,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Removes a PeerUpdateListener from the list of listeners
+     *
      * @param listener PeerUpdateListener
      */
 
@@ -396,6 +403,7 @@ public class PeerUpdater extends Thread {
 
     /**
      * Returns the list of object that are currently listening to this PeerUpdater
+     *
      * @return PeerUpdateListener[]
      */
     public PeerUpdateListener[] getPeerUpdateListeners() {
@@ -405,6 +413,7 @@ public class PeerUpdater extends Thread {
     /**
      * Sends a message to all listeners with a HashMap containg the list of all
      * peers present in the last tracker response
+     *
      * @param l LinkedHashMap
      */
     protected void fireUpdatePeerList(LinkedHashMap l) {
@@ -416,7 +425,8 @@ public class PeerUpdater extends Thread {
     /**
      * Sends a message to all listeners with an error code and a String representing
      * the reason why the last try to contact tracker failed
-     * @param error int
+     *
+     * @param error   int
      * @param message String
      */
 
