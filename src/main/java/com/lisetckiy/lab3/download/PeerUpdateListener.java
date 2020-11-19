@@ -35,15 +35,12 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.download;
 
+import java.util.LinkedHashMap;
 import java.util.EventListener;
 
-
-public interface IncomingListener extends EventListener{
-    /**
-     * Fired when a new message has been received
-     * @param m Message
-     */
-    public void messageReceived(Message m);
+public interface PeerUpdateListener extends EventListener{
+    public void updatePeerList(LinkedHashMap list);
+    public void updateFailed(int error, String message);
 }

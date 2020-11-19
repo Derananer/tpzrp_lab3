@@ -35,11 +35,11 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer.messaging;
 
-import com.lisetckiy.lab3.parser.Message_PP;
-import com.lisetckiy.lab3.parser.PeerProtocol;
-import com.lisetckiy.lab3.parser.Utils;
+import com.lisetckiy.lab3.download.IncomingListener;
+import com.lisetckiy.lab3.peer.PeerProtocol;
+import com.lisetckiy.lab3.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -87,66 +87,6 @@ public class MessageReceiver extends Thread {
     }
 
     /**
-     * Reads bytes from theInputStream
-     * @param data byte[]
-     * @return int
-     * @throws IOException
-     * @throws InterruptedException
-     * @deprecated
-     */
-    private int read2(byte[] data)throws IOException, InterruptedException{
-        int totalread = 0;
-        int read = 0;
-        while(totalread != data.length){
-            if((read = this.is.read(data, totalread, data.length - totalread)) == -1)
-                return -1;
-            totalread += read;
-            this.sleep(50);
-        }
-        return totalread;
-    }
-
-    /**
-     * Reads bytes from the input stream. This read method read exactly the number of
-     * bytes corresponding to the length of the byte array given in parameter
-     * @param data byte[]
-     * @return int
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws Exception
-     * @todo Optimize this method which seems to take too much time...
-     */
-    private int read1(byte[] data) throws IOException, InterruptedException, Exception {
-        int l = data.length;
-        byte[] payload = new byte[0];
-        int loop = 0;
-        for (int i = 0; i < l; ) {
-            loop++;
-            int available = is.available();
-
-            if (available < l - i) {
-                loop++;
-                byte[] temp = new byte[available];
-                if (is.read(temp) == -1){
-                    return -1;
-                }
-                payload = Utils.concat(payload, temp);
-                i += available;
-                this.sleep(10);
-            } else {
-                byte[] temp = new byte[l - i];
-                if (is.read(temp) == -1){
-                    return -1;
-                }
-                payload = Utils.concat(payload, temp);
-                Utils.copy(payload, data);
-                return payload.length;
-            }
-        }
-        return -1;
-    }
-
-    /**
      * Reads data from the inputstream, creates new messages according to the
      * received data and fires MessageReceived method of the listeners with the
      * new message in parameter. Loops as long as the 'run' variable is true
@@ -160,8 +100,8 @@ public class MessageReceiver extends Thread {
         byte[] fileID = new byte[20];
         byte[] peerID = new byte[20];
         byte[] length = new byte[4];
-        Message_HS hs = new Message_HS();
-        Message_PP mess = new Message_PP();
+        HandshakeMessage hs = new HandshakeMessage();
+        PeerProtocolMessage mess = new PeerProtocolMessage();
 
         while (this.run) {
             int l = 1664;
@@ -217,11 +157,7 @@ public class MessageReceiver extends Thread {
                 this.fireMessageReceived(null);
                 return;
                 // m = null;
-            } /*catch (InterruptedException ie) {
-                this.fireMessageReceived(null);
-                return;
-                // m = null;
-            } */catch (Exception e) {
+            } catch (Exception e) {
                 System.err.println(l+"Error in MessageReceiver..."+e.getMessage()
                         +" " + e.toString());
                 this.fireMessageReceived(null);
@@ -246,10 +182,6 @@ public class MessageReceiver extends Thread {
 
     public void addIncomingListener(IncomingListener listener) {
         listeners.add(IncomingListener.class, listener);
-    }
-
-    public void removeIncomingListener(IncomingListener listener) {
-        listeners.remove(IncomingListener.class, listener);
     }
 
     public IncomingListener[] getIncomingListeners() {

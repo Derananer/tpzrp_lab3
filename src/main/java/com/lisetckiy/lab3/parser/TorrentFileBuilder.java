@@ -1,5 +1,6 @@
 package com.lisetckiy.lab3.parser;
 
+import com.lisetckiy.lab3.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,11 +15,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TorrentFileBuilder {
 
-    private BDecoder bDecoder;
+    private BencodeDecoder bencodeDecoder;
 
     @Autowired
-    public TorrentFileBuilder(BDecoder bDecoder) {
-        this.bDecoder = bDecoder;
+    public TorrentFileBuilder(BencodeDecoder bencodeDecoder) {
+        this.bencodeDecoder = bencodeDecoder;
     }
 
     public TorrentFile build(String filename) {
@@ -39,7 +40,7 @@ public class TorrentFileBuilder {
     private Map parseTorrentFile(File file) {
         try (FileInputStream torrentFile = new FileInputStream(file)) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(torrentFile);
-            return bDecoder.decodeStream(bufferedInputStream);
+            return bencodeDecoder.decodeStream(bufferedInputStream);
         } catch (IOException e) {
             log.error("Error while parsing torrent file name=" + file.getName(), e.getCause());
         }
@@ -84,7 +85,7 @@ public class TorrentFileBuilder {
             Map info = (Map) map.get("info");
             try {
 
-                torrent.info_hash_as_binary = Utils.hash(BEncoder.encode(info));
+                torrent.info_hash_as_binary = Utils.hash(BencodeEncoder.encode(info));
                 torrent.info_hash_as_hex = Utils.byteArrayToByteString(torrent.info_hash_as_binary);
                 torrent.info_hash_as_url = Utils.byteArrayToURLString(torrent.info_hash_as_binary);
             } catch (IOException ioe) {

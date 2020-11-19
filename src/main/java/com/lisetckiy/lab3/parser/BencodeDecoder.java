@@ -1,5 +1,6 @@
 package com.lisetckiy.lab3.parser;
 
+import com.lisetckiy.lab3.util.Constants;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -8,7 +9,7 @@ import java.nio.CharBuffer;
 import java.util.*;
 
 @Component
-public class BDecoder {
+public class BencodeDecoder {
 
     private boolean recovery_mode;
 
@@ -28,7 +29,7 @@ public class BDecoder {
     }
 
     public static Map decodeS(BufferedInputStream data) throws IOException {
-        return new BDecoder().decodeStream(data);
+        return new BencodeDecoder().decodeStream(data);
     }
 
     private Map decode(ByteArrayInputStream data) throws IOException {

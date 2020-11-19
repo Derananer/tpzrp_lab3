@@ -35,7 +35,11 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer.messaging;
+
+import com.lisetckiy.lab3.peer.Bits;
+import com.lisetckiy.lab3.peer.PeerProtocol;
+import com.lisetckiy.lab3.util.Utils;
 
 /**
  *
@@ -45,30 +49,30 @@ package com.lisetckiy.lab3.parser;
  * @author Baptiste Dubuis
  * @version 0.1
  */
-public class Message_PP extends Message {
+public class PeerProtocolMessage extends Message {
     private byte[] length = new byte[4];
     private byte[] id = new byte[1];
     private byte[] payload;
 
-    public Message_PP(){
+    public PeerProtocolMessage(){
         super();
     }
 
-    public Message_PP(int type, int p) {
+    public PeerProtocolMessage(int type, int p) {
         super(type, p);
         this.setData(type);
     }
 
-    public Message_PP(int type){
+    public PeerProtocolMessage(int type){
         this(type, 0);
     }
 
-    public Message_PP(int type, byte[] payload, int p) {
+    public PeerProtocolMessage(int type, byte[] payload, int p) {
         super(type, p);
         this.setData(type, payload);
     }
 
-    public Message_PP(int type, byte[] payload){
+    public PeerProtocolMessage(int type, byte[] payload){
         this(type, payload, 0);
     }
 

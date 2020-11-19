@@ -35,8 +35,9 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.download;
 
+import com.lisetckiy.lab3.download.ConListenerInterface;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

@@ -35,10 +35,10 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer.messaging;
 
-import com.lisetckiy.lab3.parser.Message;
-import com.lisetckiy.lab3.parser.Utils;
+import com.lisetckiy.lab3.peer.messaging.Message;
+import com.lisetckiy.lab3.util.Utils;
 
 /**
  *
@@ -54,7 +54,7 @@ import com.lisetckiy.lab3.parser.Utils;
  * @author Baptiste Dubuis
  * @version 0.1
  */
-public class Message_HS extends Message {
+public class HandshakeMessage extends Message {
 
     private byte[] length = new byte[1];
     private byte[] protocol = new byte[19];
@@ -65,7 +65,7 @@ public class Message_HS extends Message {
     /**
      * Creates an empty HS message
      */
-    public Message_HS(){
+    public HandshakeMessage(){
         super(-1, 0);
     }
 
@@ -74,7 +74,7 @@ public class Message_HS extends Message {
      * @param infoHash byte[]
      * @param peerID byte[]
      */
-    public Message_HS(byte[] infoHash, byte[] peerID){
+    public HandshakeMessage(byte[] infoHash, byte[] peerID){
         this(new byte[]{19}, "BitTorrent protocol".getBytes(),
                 new byte[]{0,0,0,0,0,0,0,0}, infoHash, peerID);
     }
@@ -87,7 +87,7 @@ public class Message_HS extends Message {
      * @param fileID byte[]
      * @param peerID byte[]
      */
-    public Message_HS(byte[] length, byte[] protocol, byte[] reserved, byte[] fileID, byte[] peerID){
+    public HandshakeMessage(byte[] length, byte[] protocol, byte[] reserved, byte[] fileID, byte[] peerID){
         super(-1, 0);
         this.length = length;
         this.protocol = protocol;

@@ -35,12 +35,10 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer.messaging;
 
-import com.lisetckiy.lab3.parser.Message;
-import com.lisetckiy.lab3.parser.Message_PP;
-import com.lisetckiy.lab3.parser.OutgoingListener;
-import com.lisetckiy.lab3.parser.PeerProtocol;
+import com.lisetckiy.lab3.download.OutgoingListener;
+import com.lisetckiy.lab3.peer.PeerProtocol;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -119,7 +117,7 @@ public class MessageSender extends Thread {
      */
     public void run() {
         Message out = null;
-        byte[] keep = new Message_PP(PeerProtocol.KEEP_ALIVE).generate();
+        byte[] keep = new PeerProtocolMessage(PeerProtocol.KEEP_ALIVE).generate();
         try {
             while (this.run) {
                 if(this.outgoingMessage != null && this.os != null)

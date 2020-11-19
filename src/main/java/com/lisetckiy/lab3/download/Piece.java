@@ -35,9 +35,9 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.download;
 
-import com.lisetckiy.lab3.parser.Utils;
+import com.lisetckiy.lab3.util.Utils;
 
 import java.util.*;
 

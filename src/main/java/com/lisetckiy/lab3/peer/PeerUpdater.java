@@ -35,8 +35,12 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer;
 
+import com.lisetckiy.lab3.parser.BencodeDecoder;
+import com.lisetckiy.lab3.download.PeerUpdateListener;
+import com.lisetckiy.lab3.parser.TorrentFile;
+import com.lisetckiy.lab3.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -349,7 +353,7 @@ public class PeerUpdater extends Thread {
             BufferedInputStream bis = new BufferedInputStream(is);
 
             // Decode the tracker bencoded response
-            Map m = BDecoder.decodeS(bis);
+            Map m = BencodeDecoder.decodeS(bis);
             log.info(m.toString());
             bis.close();
             is.close();

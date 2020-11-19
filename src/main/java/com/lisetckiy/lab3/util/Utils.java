@@ -35,7 +35,7 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.util;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;

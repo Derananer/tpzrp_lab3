@@ -35,8 +35,12 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.download;
 
+import com.lisetckiy.lab3.peer.Peer;
+import com.lisetckiy.lab3.peer.PeerProtocol;
+import com.lisetckiy.lab3.peer.messaging.*;
+import com.lisetckiy.lab3.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -70,7 +74,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
     private byte[] fileID;
     private byte[] myID;
     public Peer peer;
-    private LogManager lm;
 
     private final boolean initiate;
     public byte[] bitfield = null;
@@ -129,7 +132,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
             }
         } else
             this.peer = peer;
-        lm = new LogManager("downloads.log");
     }
 
     /**
@@ -184,7 +186,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
         if (this.initiate) {
             //todo init connection
-            this.ms.addMessageToQueue(new Message_HS(this.fileID, this.myID));
+            this.ms.addMessageToQueue(new HandshakeMessage(this.fileID, this.myID));
             this.changeState(this.WAIT_HS);
         } else {
             this.changeState(this.WAIT_BFORHAVE);
@@ -299,7 +301,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
         this.lmrt = System.currentTimeMillis();
 
         if (m.getType() == PeerProtocol.HANDSHAKE) {
-            Message_HS hs = (Message_HS) m;
+            HandshakeMessage hs = (HandshakeMessage) m;
 
             // Check that the requested file is the one this client is sharing
             if (Utils.bytesCompare(hs.getFileID(),
@@ -307,10 +309,10 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                                   )) {
                 if (!initiate) { // If not already done, send handshake message
                     this.peer.setID(new String(hs.getPeerID()));
-                    this.ms.addMessageToQueue(new Message_HS(this.fileID, this.myID));
+                    this.ms.addMessageToQueue(new HandshakeMessage(this.fileID, this.myID));
                 }
 
-                this.ms.addMessageToQueue(new Message_PP(PeerProtocol.BITFIELD, this.bitfield));
+                this.ms.addMessageToQueue(new PeerProtocolMessage(PeerProtocol.BITFIELD, this.bitfield));
 
 
                 this.creationTime = System.currentTimeMillis();
@@ -323,7 +325,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
             hs = null;
 
         } else {
-            Message_PP message = (Message_PP) m;
+            PeerProtocolMessage message = (PeerProtocolMessage) m;
             switch (message.getType()) {
                 case PeerProtocol.KEEP_ALIVE:
                     // Nothing to do, just keep the connection open
@@ -492,14 +494,13 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                     }
                 } else if (downloadPiece != null && !this.peer.isChoking()) {
 
-                    byte[] pieceIndex = Utils.intToByteArray(downloadPiece.
-                                                                                  getIndex());
+                    byte[] pieceIndex = Utils.intToByteArray(downloadPiece.getIndex());
                     byte[] begin = Utils.intToByteArray(offset);
 
                     int length = downloadPiece.getLength() - offset;
                     if (length >= PeerProtocol.BLOCK_SIZE)
                         length = PeerProtocol.BLOCK_SIZE;
-                    ms.addMessageToQueue(new Message_PP(PeerProtocol.REQUEST, Utils.concat(pieceIndex, Utils.concat(begin, Utils.intToByteArray(length))), 2));
+                    ms.addMessageToQueue(new PeerProtocolMessage(PeerProtocol.REQUEST, Utils.concat(pieceIndex, Utils.concat(begin, Utils.intToByteArray(length))), 2));
                     if (this.updateTime == 0)
                         this.updateTime = System.currentTimeMillis();
                     this.pendingRequest.add(new Integer(offset));

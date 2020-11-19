@@ -35,25 +35,18 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
-
-import com.lisetckiy.lab3.parser.DownloadTask;
+package com.lisetckiy.lab3.download;
 
 import java.util.EventListener;
-import java.util.BitSet;
 
-/**
- * Interface for managing events launched by the DownloadTask class
- *
- * @author Baptiste Dubuis
- * @version 0.1
- */
-public interface DTListener extends EventListener{
-    public void pieceCompleted(String peerID, int pieceNB, boolean complete);
-    public void pieceRequested(int pieceNB, boolean requested);
-    public void taskCompleted(String id, int reason);
-    public void peerAvailability(String id, BitSet hasPiece);
-    public void peerReady(String id);
-    public void peerRequest(String peerID,int piece, int begin, int length);
-    public void addActiveTask(String id, DownloadTask dt);
+public interface OutgoingListener extends EventListener{
+    /**
+     * Fired when the connection to the remote peer has been closed
+     */
+    public void connectionClosed();
+
+    /**
+     * Fired when a keep-alive message has been sent
+     */
+    public void keepAliveSent();
 }

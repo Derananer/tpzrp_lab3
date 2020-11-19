@@ -35,18 +35,17 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.download;
+
+import com.lisetckiy.lab3.peer.messaging.Message;
 
 import java.util.EventListener;
 
-public interface OutgoingListener extends EventListener{
-    /**
-     * Fired when the connection to the remote peer has been closed
-     */
-    public void connectionClosed();
 
+public interface IncomingListener extends EventListener{
     /**
-     * Fired when a keep-alive message has been sent
+     * Fired when a new message has been received
+     * @param m Message
      */
-    public void keepAliveSent();
+    public void messageReceived(Message m);
 }

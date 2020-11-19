@@ -35,30 +35,35 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer;
 
-import com.lisetckiy.lab3.parser.Peer;
-
-import java.util.*;
+import com.lisetckiy.lab3.util.Utils;
 
 /**
- * Compares 2 peers upload rate
+ * Constants used in Peer Protocol.
+ *
+ * @author Baptiste Dubuis
+ * @version 0.1
  */
-public class ULRateComparator implements Comparator {
-    /**
-     * Compares its two arguments for order.
-     *
-     * @param a the first object to be compared.
-     * @param b the second object to be compared.
-     * @return a negative integer, zero, or a positive integer as the first
-     * argument is less than, equal to, or greater than the second.
-     */
-    public int compare(Object a, Object b) {
-        if (a instanceof Peer && b instanceof Peer)
-            if (((Peer) a).getULRate(false) > ((Peer) b).getULRate(false))
-                return -1;
-            else if (((Peer) a).getULRate(false) < ((Peer) b).getULRate(false))
-                return 1;
-        return 0;
-    }
+public class PeerProtocol {
+    public static final int HANDSHAKE = -1;
+    public static final int KEEP_ALIVE = 0;
+    public static final int CHOKE = 1;
+    public static final int UNCHOKE = 2;
+    public static final int INTERESTED = 3;
+    public static final int NOT_INTERESTED = 4;
+    public static final int HAVE = 5;
+    public static final int BITFIELD = 6;
+    public static final int REQUEST = 7;
+    public static final int PIECE = 8;
+    public static final int CANCEL = 9;
+    public static final int PORT = 10;
+    public static final String[] TYPE = {"Keep_Alive", "Choke", "Unchoke",
+                                        "Interested", "Not_Interested", "Have",
+                                        "Bitfield", "Request", "Piece",
+                                        "Cancel", "Port"};
+
+    public static final int BLOCK_SIZE = 16384;
+    public static final byte[] BLOCK_SIZE_BYTES = Utils.intToByteArray(16384);
+
 }

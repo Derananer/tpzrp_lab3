@@ -35,44 +35,72 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer;
 
-import lombok.extern.slf4j.Slf4j;
+import com.lisetckiy.lab3.util.Utils;
 
-import java.io.*;
-import java.util.*;
+public class Bits {
+    private boolean[] bits;
 
-/**
- * Utility class to output information to a file
- *
- * @author Baptiste Dubuis
- * @version 0.1
- */
-@Slf4j
-public class LogManager {
-    private String filename;
-    private OutputStream os;
-    public FileWriter fw;
-
-    public LogManager(String logfile) {
-        this.filename = logfile;
+    public Bits(int length){
+        this.bits = new boolean[length];
     }
+    public Bits(byte[] b) {
+        this.bits = Utils.byteArray2BitArray(b);
+    }
+    public Bits(){}
 
-    /**
-     * Write the given string to the file corresponding to this manager
-     * @param s String
-     */
-    synchronized public void writeLog(String s){
-        try{
-            this.fw = new FileWriter(this.filename, true);
-            Date d = new Date();
-
-            this.fw.write(d+" : "+s+"\r\n");
-            this.fw.flush();
-            this.fw.close();
-        }catch(Exception e){
-            log.info("Not able to write to log file");
+    public Bits and(Bits b){
+        if(this.length() != b.length()){
+            System.err.println("Error during and operation: bits length doesn't match");
+            return null;
         }
+        Bits temp = new Bits(this.length());
+        for(int i = 0; i < this.length(); i++)
+            temp.set(i, this.get(i) && b.get(i));
+        return temp;
     }
 
+    public Bits or(Bits b){
+        if(this.length() != b.length()){
+            System.err.println("Error during and operation: bits length doesn't match");
+            return null;
+        }
+        Bits temp = new Bits(this.length());
+        for(int i = 0; i < this.length(); i++)
+            temp.set(i, this.get(i) || b.get(i));
+        return temp;
+    }
+
+
+
+
+    public void setBits(boolean[] b){
+        this.bits = b;
+    }
+
+    public int length(){
+        return this.bits.length;
+    }
+
+    public boolean[] getBits(){
+        return this.bits;
+    }
+
+    public boolean get(int i){
+        return this.bits[i];
+    }
+    public void set(int i){
+        this.bits[i] = true;
+    }
+    public void set(int i, boolean val){
+        this.bits[i] = val;
+    }
+
+    public String toString(){
+        String toString = "";
+        for(int i = 0; i < this.bits.length; i++)
+            toString += this.bits[i] ? 1:0;
+        return toString;
+    }
 }

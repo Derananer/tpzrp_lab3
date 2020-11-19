@@ -22,6 +22,8 @@
 
 package com.lisetckiy.lab3.parser;
 
+import com.lisetckiy.lab3.util.Constants;
+
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -32,11 +34,11 @@ import java.util.*;
  *
  * @author TdC_VgA
  */
-public class BEncoder {
+public class BencodeEncoder {
 
     public static byte[] encode(Map object) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new BEncoder().encode(baos, object);
+        new BencodeEncoder().encode(baos, object);
         return baos.toByteArray();
     }
 

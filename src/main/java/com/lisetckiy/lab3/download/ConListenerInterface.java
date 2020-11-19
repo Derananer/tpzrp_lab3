@@ -35,7 +35,7 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.download;
 
 import java.util.EventListener;
 import java.net.Socket;

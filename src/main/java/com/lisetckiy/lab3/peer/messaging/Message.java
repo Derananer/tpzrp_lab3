@@ -35,12 +35,33 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.peer.messaging;
 
-import java.util.LinkedHashMap;
-import java.util.EventListener;
+/**
+ * Represent the general structure of a protocol message. It must have a type.
+ */
+abstract public class Message {
+    protected int type;
+    private int priority = 0;
 
-public interface PeerUpdateListener extends EventListener{
-    public void updatePeerList(LinkedHashMap list);
-    public void updateFailed(int error, String message);
+    public Message(){}
+
+    public Message(int type){
+        this(type, 0);
+    }
+
+    public Message(int type, int priority){
+        this.type = type;
+        this.priority = priority;
+    }
+
+    public int getPriority(){
+        return this.priority;
+    }
+
+    public int getType(){
+        return this.type;
+    }
+
+    abstract public byte[] generate();
 }

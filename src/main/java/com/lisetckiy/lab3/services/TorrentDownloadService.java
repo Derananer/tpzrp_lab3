@@ -1,5 +1,9 @@
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.services;
 
+import com.lisetckiy.lab3.download.DownloadManager;
+import com.lisetckiy.lab3.parser.TorrentFile;
+import com.lisetckiy.lab3.parser.TorrentFileBuilder;
+import com.lisetckiy.lab3.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

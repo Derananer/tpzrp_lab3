@@ -35,33 +35,23 @@
  *    http://sourceforge.net/projects/bitext/
  */
 
-package com.lisetckiy.lab3.parser;
+package com.lisetckiy.lab3.download;
 
-import com.lisetckiy.lab3.parser.Peer;
-
-import java.util.*;
+import java.util.EventListener;
+import java.util.BitSet;
 
 /**
- * Compares 2 peers download rate
+ * Interface for managing events launched by the DownloadTask class
  *
  * @author Baptiste Dubuis
  * @version 0.1
  */
-public class DLRateComparator implements Comparator {
-    /**
-     * Compares its two arguments for order.
-     *
-     * @param a the first object to be compared.
-     * @param b the second object to be compared.
-     * @return a negative integer, zero, or a positive integer as the first
-     *   argument is less than, equal to, or greater than the second.
-     */
-    public int compare(Object a, Object b) {
-        if (a instanceof Peer && b instanceof Peer)
-            if (((Peer) a).getDLRate(false) > ((Peer) b).getDLRate(false))
-                return -1;
-            else if (((Peer) a).getDLRate(false) < ((Peer) b).getDLRate(false))
-                return 1;
-        return 0;
-    }
+public interface DTListener extends EventListener{
+    public void pieceCompleted(String peerID, int pieceNB, boolean complete);
+    public void pieceRequested(int pieceNB, boolean requested);
+    public void taskCompleted(String id, int reason);
+    public void peerAvailability(String id, BitSet hasPiece);
+    public void peerReady(String id);
+    public void peerRequest(String peerID,int piece, int begin, int length);
+    public void addActiveTask(String id, DownloadTask dt);
 }
