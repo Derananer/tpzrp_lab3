@@ -95,126 +95,12 @@ public class PeerUpdater extends Thread {
     }
 
     /**
-     * Returns the last interval for updates received from the tracker
-     *
-     * @return int
-     */
-    public int getInterval() {
-        return this.interval;
-    }
-
-    /**
-     * Returns the last minimal interval for updates received from the tracker
-     *
-     * @return int
-     */
-
-    public int getMinInterval() {
-        return this.minInterval;
-    }
-
-    /**
-     * Returns the number of bytes that have been downloaded so far
-     *
-     * @return int
-     */
-
-    public long getDownloaded() {
-        return this.downloaded;
-    }
-
-    /**
-     * Returns the number of bytes that have been uploaded so far
-     *
-     * @return int
-     */
-
-    public long getUploaded() {
-        return this.uploaded;
-    }
-
-    /**
-     * Returns the number of bytes still to download to complete task
-     *
-     * @return int
-     */
-
-    public long getLeft() {
-        return this.left;
-    }
-
-    /**
-     * Returns the current event of the client
-     *
-     * @return int
-     */
-
-    public String getEvent() {
-        return this.event;
-    }
-
-    /**
-     * Sets the interval between tracker update
-     *
-     * @param interval int
-     */
-    public void setInterval(int interval) {
-        this.interval = interval;
-    }
-
-    /**
-     * Sets the mininterval between tracker update
-     *
-     * @param minInt int
-     */
-    public void setMinInterval(int minInt) {
-        this.minInterval = minInt;
-    }
-
-    /**
-     * Sets the # of bytes downloaded so far
-     *
-     * @param dl long
-     */
-
-    public void setDownloaded(long dl) {
-        this.downloaded = dl;
-    }
-
-    /**
-     * Sets the # of bytes uploaded so far
-     *
-     * @param ul long
-     */
-    public void setUploaded(long ul) {
-        this.uploaded = ul;
-    }
-
-    /**
      * Sets the # of bytes still to download
      *
      * @param left long
      */
     public void setLeft(long left) {
         this.left = left;
-    }
-
-    /**
-     * Sets the current state of the client
-     *
-     * @param event String
-     */
-    public void setEvent(String event) {
-        this.event = event;
-    }
-
-    /**
-     * Returns the list of peers in its current state
-     *
-     * @return LinkedHashMap
-     */
-    public LinkedHashMap getList() {
-        return this.peerList;
     }
 
     /**
@@ -393,16 +279,6 @@ public class PeerUpdater extends Thread {
      */
     public void addPeerUpdateListener(PeerUpdateListener listener) {
         listeners.add(PeerUpdateListener.class, listener);
-    }
-
-    /**
-     * Removes a PeerUpdateListener from the list of listeners
-     *
-     * @param listener PeerUpdateListener
-     */
-
-    public void removePeerUpdateListener(PeerUpdateListener listener) {
-        listeners.remove(PeerUpdateListener.class, listener);
     }
 
     /**

@@ -139,10 +139,10 @@ public class BencodeEncoder {
             return (false);
         }
         if (o1 instanceof Integer) {
-            o1 = new Long(((Integer) o1).longValue());
+            o1 = ((Integer) o1).longValue();
         }
         if (o2 instanceof Integer) {
-            o2 = new Long(((Integer) o2).longValue());
+            o2 = ((Integer) o2).longValue();
         }
         if (o1 instanceof Float) {
             o1 = String.valueOf((Float) o1);
@@ -171,7 +171,7 @@ public class BencodeEncoder {
         }
     }
 
-    public static boolean listsAreIdentical(List list1, List list2) {
+    private static boolean listsAreIdentical(List list1, List list2) {
         if (list1 == null && list2 == null) {
             return (true);
         } else if (list1 == null || list2 == null) {
@@ -188,7 +188,7 @@ public class BencodeEncoder {
         return (true);
     }
 
-    public static boolean mapsAreIdentical(Map map1, Map map2) {
+    private static boolean mapsAreIdentical(Map map1, Map map2) {
         if (map1 == null && map2 == null) {
             return (true);
         } else if (map1 == null || map2 == null) {
@@ -197,9 +197,7 @@ public class BencodeEncoder {
         if (map1.size() != map2.size()) {
             return (false);
         }
-        Iterator it = map1.keySet().iterator();
-        while (it.hasNext()) {
-            Object key = it.next();
+        for (Object key : map1.keySet()) {
             Object v1 = map1.get(key);
             Object v2 = map2.get(key);
             if (!objectsAreIdentical(v1, v2)) {

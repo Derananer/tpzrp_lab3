@@ -52,6 +52,6 @@ public interface DTListener extends EventListener{
     public void taskCompleted(String id, int reason);
     public void peerAvailability(String id, BitSet hasPiece);
     public void peerReady(String id);
-    public void peerRequest(String peerID,int piece, int begin, int length);
+//    public void peerRequest(String peerID,int piece, int begin, int length);
     public void addActiveTask(String id, DownloadTask dt);
 }

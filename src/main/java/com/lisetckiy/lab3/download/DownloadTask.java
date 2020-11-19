@@ -247,17 +247,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
     }
 
     /**
-     * Returns the total amount of bytes downloaded by this task so far
-     *
-     * @return int
-     */
-    public synchronized int checkDownloaded() {
-        int d = new Long(this.downloaded).intValue();
-        //this.downloaded = 0;
-        return d;
-    }
-
-    /**
      * Fired when the connection to the remote peer has been closed. This method
      * clear this task data and send a message to the DownloadManager, informing
      * it that this peer connection has been closed, resulting in the deletion of
@@ -295,7 +284,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
      */
     public synchronized void messageReceived(Message m) {
         if (m == null) {
-            this.fireTaskCompleted(this.peer.toString(), this.MALFORMED_MESSAGE);
+            this.fireTaskCompleted(this.peer.toString(), MALFORMED_MESSAGE);
             return;
         }
         this.lmrt = System.currentTimeMillis();
@@ -304,26 +293,18 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
             HandshakeMessage hs = (HandshakeMessage) m;
 
             // Check that the requested file is the one this client is sharing
-            if (Utils.bytesCompare(hs.getFileID(),
-                                   this.fileID
-                                  )) {
+            if (Utils.bytesCompare(hs.getFileID(), this.fileID)) {
                 if (!initiate) { // If not already done, send handshake message
                     this.peer.setID(new String(hs.getPeerID()));
                     this.ms.addMessageToQueue(new HandshakeMessage(this.fileID, this.myID));
                 }
-
                 this.ms.addMessageToQueue(new PeerProtocolMessage(PeerProtocol.BITFIELD, this.bitfield));
-
-
                 this.creationTime = System.currentTimeMillis();
-                this.changeState(this.WAIT_BFORHAVE);
+                this.changeState(WAIT_BFORHAVE);
             } else {
-                this.fireTaskCompleted(this.peer.toString(),
-                                       this.BAD_HANDSHAKE
-                                      );
+                this.fireTaskCompleted(this.peer.toString(), BAD_HANDSHAKE);
             }
             hs = null;
-
         } else {
             PeerProtocolMessage message = (PeerProtocolMessage) m;
             switch (message.getType()) {
@@ -350,9 +331,9 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                      */
                     this.peer.setChoking(false);
                     if (this.downloadPiece == null) {
-                        this.changeState(this.READY_2_DL);
+                        this.changeState(READY_2_DL);
                     } else
-                        this.changeState(this.DOWNLOADING);
+                        this.changeState(DOWNLOADING);
                     break;
 
                 case PeerProtocol.INTERESTED:
@@ -394,26 +375,11 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                     this.firePeerAvailability(this.peer.toString(),
                                               this.peer.getHasPiece()
                                              );
-                    this.changeState(this.WAIT_UNCHOKE);
+                    this.changeState(WAIT_UNCHOKE);
                     break;
 
-                case PeerProtocol.REQUEST:
-                    /*
-                     * If the peer is not choked, advertise the DownloadManager of
-                     * this request. Otherwise, end connection since the peer does
-                     * not respect the Bittorrent protocol
-                     */
-
-                    if (!this.peer.isChoked()) {
-                        this.firePeerRequest(this.peer.toString(),
-                                             Utils.byteArrayToInt(Utils.subArray(message.getPayload(), 0, 4)),
-                                             Utils.byteArrayToInt(Utils.subArray(message.getPayload(), 4, 4)),
-                                             Utils.byteArrayToInt(Utils.subArray(message.getPayload(), 8, 4))
-                                            );
-                    } else {
-                        this.fireTaskCompleted(this.peer.toString(), this.MALFORMED_MESSAGE);
-                    }
-                    break;
+//                case PeerProtocol.REQUEST:
+//                    break;
 
                 case PeerProtocol.PIECE:
                     /**
@@ -431,13 +397,10 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                     this.changeState(this.DOWNLOADING);
                     break;
 
-                case PeerProtocol.CANCEL:
-                    // TODO: Still to implement the cancel message. Not used here
-                    break;
-
-                case PeerProtocol.PORT:
-                    // TODO: Still to implement the port message. Not used here
-                    break;
+//                case PeerProtocol.CANCEL:
+//                    break;
+//                case PeerProtocol.PORT:
+//                    break;
             }
             message = null;
         }
@@ -463,7 +426,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                  * bandwidth because of the RTT to the remote peer
                  */
                 if (this.pendingRequest.size() < 5 && offset < downloadPiece.getLength())
-                    this.changeState(this.DOWNLOADING);
+                    this.changeState(DOWNLOADING);
                 break;
             case READY_2_DL:
                 /**
@@ -483,11 +446,11 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                         offset = 0;
                         if (downloadPiece.verify()) {
                             this.firePieceCompleted(p, true);
-                            this.changeState(this.READY_2_DL);
+                            this.changeState(READY_2_DL);
 
                         } else {
                             this.firePieceCompleted(p, false);
-                            this.changeState(this.READY_2_DL);
+                            this.changeState(READY_2_DL);
                         }
                         this.clear();
                         this.changeState(READY_2_DL);
@@ -503,10 +466,10 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                     ms.addMessageToQueue(new PeerProtocolMessage(PeerProtocol.REQUEST, Utils.concat(pieceIndex, Utils.concat(begin, Utils.intToByteArray(length))), 2));
                     if (this.updateTime == 0)
                         this.updateTime = System.currentTimeMillis();
-                    this.pendingRequest.add(new Integer(offset));
+                    this.pendingRequest.add(offset);
                     offset += PeerProtocol.BLOCK_SIZE;
                     this.isDownloading = true;
-                    this.changeState(this.WAIT_BLOCK);
+                    this.changeState(WAIT_BLOCK);
                 }
 
                 break;
@@ -515,10 +478,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
     public synchronized void addDTListener(DTListener listener) {
         listeners.add(DTListener.class, listener);
-    }
-
-    public synchronized void removeDTListener(DTListener listener) {
-        listeners.remove(DTListener.class, listener);
     }
 
     public synchronized DTListener[] getDTListeners() {
@@ -531,9 +490,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
      * @param piece     int
      * @param requested boolean
      */
-    private synchronized void firePieceRequested(int piece,
-                                                 boolean requested
-                                                ) {
+    private synchronized void firePieceRequested(int piece, boolean requested) {
         for (DTListener listener : getDTListeners()) {
             listener.pieceRequested(piece, requested);
         }
@@ -576,29 +533,12 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
     }
 
     /**
-     * Fired to inform that the peer requests a piece block
-     *
-     * @param peerID String
-     * @param piece  int
-     * @param begin  int
-     * @param length int
-     */
-    private synchronized void firePeerRequest(String peerID, int piece, int begin, int length) {
-        for (DTListener listener : getDTListeners()) {
-            listener.peerRequest(peerID, piece, begin, length);
-        }
-
-    }
-
-    /**
      * Fired to inform that the availability of this peer has changed
      *
      * @param id       String
      * @param hasPiece BitSet
      */
-    private synchronized void firePeerAvailability(String id,
-                                                   BitSet hasPiece
-                                                  ) {
+    private synchronized void firePeerAvailability(String id, BitSet hasPiece) {
         for (DTListener listener : getDTListeners()) {
             listener.peerAvailability(id, hasPiece);
         }
@@ -623,7 +563,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
      * connection to the remote peer
      */
     public synchronized void end() {
-        this.changeState(this.IDLE);
+        this.changeState(IDLE);
         this.run = false;
         synchronized (this) {
             if (this.ms != null) {
@@ -652,7 +592,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
             }
             this.peerConnection = null;
-
             this.notifyAll();
         }
     }
@@ -678,5 +617,4 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
             }
         }
     }
-
 }

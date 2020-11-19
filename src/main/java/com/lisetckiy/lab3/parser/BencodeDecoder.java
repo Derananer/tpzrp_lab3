@@ -11,12 +11,6 @@ import java.util.*;
 @Component
 public class BencodeDecoder {
 
-    private boolean recovery_mode;
-
-//    public Map decodeByteArray(byte[] data) throws IOException {
-//        return (decode(new ByteArrayInputStream(data)));
-//    }
-
     //main entry
     public Map decodeStream(BufferedInputStream data) throws IOException {
         Object res = decodeInputStream(data, 0);
@@ -30,16 +24,6 @@ public class BencodeDecoder {
 
     public static Map decodeS(BufferedInputStream data) throws IOException {
         return new BencodeDecoder().decodeStream(data);
-    }
-
-    private Map decode(ByteArrayInputStream data) throws IOException {
-        Object res = decodeInputStream(data, 0);
-        if (res == null) {
-            throw (new IOException("BDecoder: zero length file"));
-        } else if (!(res instanceof Map)) {
-            throw (new IOException("BDecoder: top level isn't a Map"));
-        }
-        return ((Map) res);
     }
 
     private Object decodeInputStream(InputStream bais, int nesting) throws IOException {
@@ -73,12 +57,10 @@ public class BencodeDecoder {
                         throw (new IOException("BDecoder: invalid input data, 'e' missing from end of dictionary"));
                     }
                 } catch (Throwable e) {
-                    if (!recovery_mode) {
-                        if (e instanceof IOException) {
-                            throw ((IOException) e);
-                        }
-                        throw (new IOException(e.toString()));
+                    if (e instanceof IOException) {
+                        throw ((IOException) e);
                     }
+                    throw (new IOException(e.toString()));
                 }
                 //return the map
                 return tempMap;
@@ -99,12 +81,10 @@ public class BencodeDecoder {
                         throw (new IOException("BDecoder: invalid input data, 'e' missing from end of list"));
                     }
                 } catch (Throwable e) {
-                    if (!recovery_mode) {
-                        if (e instanceof IOException) {
-                            throw ((IOException) e);
-                        }
-                        throw (new IOException(e.toString()));
+                    if (e instanceof IOException) {
+                        throw ((IOException) e);
                     }
+                    throw (new IOException(e.toString()));
                 }
                 //return the list
                 return tempList;
@@ -153,39 +133,6 @@ public class BencodeDecoder {
         return Long.parseLong(sb.toString());
     }
 
-    // This one causes lots of "Query Information" calls to the filesystem
-    private long getNumberFromStreamOld(InputStream bais, char parseChar) throws IOException {
-        int length = 0;
-        //place a mark
-        bais.mark(Integer.MAX_VALUE);
-        int tempByte = bais.read();
-        while ((tempByte != parseChar) && (tempByte >= 0)) {
-            tempByte = bais.read();
-            length++;
-        }
-        //are we at the end of the stream?
-        if (tempByte < 0) {
-            return -1;
-        }
-        //reset the mark
-        bais.reset();
-        //get the length
-        byte[] tempArray = new byte[length];
-        int count = 0;
-        int len = 0;
-        //get the string
-        while (count != length &&
-                (len = bais.read(tempArray, count, length - count)) > 0) {
-            count += len;
-        }
-        //jump ahead in the stream to compensate for the :
-        bais.skip(1);
-        //return the value
-        CharBuffer cb = Constants.DEFAULT_CHARSET.decode(ByteBuffer.wrap(tempArray));
-        String str_value = new String(cb.array(), 0, cb.limit());
-        return Long.parseLong(str_value);
-    }
-
     private byte[] getByteArrayFromStream(InputStream bais) throws IOException {
         int length = (int) getNumberFromStream(bais, ':');
         if (length < 0) {
@@ -208,66 +155,4 @@ public class BencodeDecoder {
         }
         return tempArray;
     }
-
-//    public void setRecoveryMode(boolean r) {
-//        recovery_mode = r;
-//    }
-
-//    private void print(PrintWriter writer, Object obj) {
-//        print(writer, obj, "", false);
-//    }
-//
-//    private void print(PrintWriter writer,
-//                       Object obj,
-//                       String indent,
-//                       boolean skip_indent) {
-//        String use_indent = skip_indent ? "" : indent;
-//        if (obj instanceof Long) {
-//            writer.println(use_indent + obj);
-//        } else if (obj instanceof byte[]) {
-//            byte[] b = (byte[]) obj;
-//            if (b.length == 20) {
-//                writer.println(use_indent + " { " + b + " }");
-//            } else if (b.length < 64) {
-//                writer.println(new String(b));
-//            } else {
-//                writer.println("[byte array length " + b.length);
-//            }
-//        } else if (obj instanceof String) {
-//            writer.println(use_indent + obj);
-//        } else if (obj instanceof List) {
-//            List l = (List) obj;
-//            writer.println(use_indent + "[");
-//            for (int i = 0; i < l.size(); i++) {
-//                writer.print(indent + "  (" + i + ") ");
-//                print(writer, l.get(i), indent + "    ", true);
-//            }
-//            writer.println(indent + "]");
-//
-//        } else {
-//            Map m = (Map) obj;
-//            Iterator it = m.keySet().iterator();
-//            while (it.hasNext()) {
-//                String key = (String) it.next();
-//                if (key.length() > 256) {
-//                    writer.print(indent + key.substring(0, 256) + "... = ");
-//                } else {
-//                    writer.print(indent + key + " = ");
-//                }
-//                print(writer, m.get(key), indent + "  ", true);
-//            }
-//        }
-//    }
-
-//    private static void print(File f, File output) {
-//        try {
-//            BDecoder decoder = new BDecoder();
-//            decoder.setRecoveryMode(false);
-//            PrintWriter pw = new PrintWriter(new FileWriter(output));
-//            decoder.print(pw, decoder.decodeStream(new BufferedInputStream(new FileInputStream(f))));
-//            pw.flush();
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
-//    }
 }

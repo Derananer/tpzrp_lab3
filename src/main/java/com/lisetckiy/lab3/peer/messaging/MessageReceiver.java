@@ -158,8 +158,7 @@ public class MessageReceiver extends Thread {
                 return;
                 // m = null;
             } catch (Exception e) {
-                System.err.println(l+"Error in MessageReceiver..."+e.getMessage()
-                        +" " + e.toString());
+                System.err.println(l+"Error in MessageReceiver..."+e.getMessage() +" " + e.toString());
                 this.fireMessageReceived(null);
                 return;
                 // m = null;
@@ -176,7 +175,9 @@ public class MessageReceiver extends Thread {
         try{
             this.dis.close();
             this.dis = null;
-        }catch(Exception e){}
+        }catch(Exception e){
+            log.error(e.getMessage(), e);
+        }
 
     }
 

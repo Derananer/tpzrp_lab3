@@ -62,50 +62,12 @@ public class ConnectionListener extends Thread {
 
     public ConnectionListener() {}
 
-
-//    public ConnectionListener(int minPort, int maxPort){
-//        this.minPort = minPort;
-//        this.maxPort = maxPort;
-//    }
-
     /**
      * Returns the port this client is listening on
      * @return int
      */
     public int getConnectedPort(){
         return this.connectedPort;
-    }
-
-    /**
-     * Returns the minimal port number this client will try to listen on
-     * @return int
-     */
-    public int getMinPort(){
-        return this.minPort;
-    }
-
-    /**
-     * Returns the maximal port number this client will try to listen on
-     * @return int
-     */
-    public int getMaxPort(){
-        return this.maxPort;
-    }
-
-    /**
-     * Sets the minimal port number this client will try to listen on
-     * @param minPort int
-     */
-    public void setMinPort(int minPort){
-        this.minPort = minPort;
-    }
-
-    /**
-     * Sets the minimal port number this client will try to listen on
-     * @param maxPort int
-     */
-    public void setMaxPort(int maxPort){
-        this.maxPort = maxPort;
     }
 
     /**
@@ -128,18 +90,6 @@ public class ConnectionListener extends Thread {
             } catch (IOException ioe) {}
         return false;
     }
-//
-//    /**
-//     * Try to create a server socket for remote peers to connect on within current
-//     * port range
-//     * @return boolean
-//     */
-//    public boolean connect(){
-//        if(this.minPort != -1 && this.maxPort != -1)
-//            return this.connect(this.minPort, this.maxPort);
-//        else
-//            return false;
-//    }
 
     public void run() {
         byte[] b = new byte[0];
@@ -163,22 +113,8 @@ public class ConnectionListener extends Thread {
         }
     }
 
-    /**
-     * Decides if the client should accept or not future connection
-     * @param accept true if it should accept, false otherwise
-     */
-    public synchronized void setAccept(boolean accept){
-        this.acceptConnection = accept;
-        this.notifyAll();
-    }
-
-
     public void addConListenerInterface(ConListenerInterface listener) {
         listeners.add(ConListenerInterface.class, listener);
-    }
-
-    public void removeConListenerInterface(ConListenerInterface listener) {
-        listeners.remove(ConListenerInterface.class, listener);
     }
 
     public ConListenerInterface[] getConListenerInterfaces() {

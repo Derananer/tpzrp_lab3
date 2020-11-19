@@ -70,9 +70,6 @@ public class MessageSender extends Thread {
         listeners.add(OutgoingListener.class, listener);
     }
 
-    public void removeOutgoingListener(OutgoingListener listener) {
-       listeners.remove(OutgoingListener.class, listener);
-   }
 
     public OutgoingListener[] getOutgoingListeners() {
         return listeners.getListeners(OutgoingListener.class);
