@@ -47,10 +47,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.io.OutputStream;
 import javax.swing.event.EventListenerList;
 
-/**
- * Thread created to send message to the remote peer. Hold a queue for outgoing
- * messages
- */
 @Slf4j
 public class MessageSender extends Thread {
     private OutputStream os = null;
@@ -146,10 +142,6 @@ public class MessageSender extends Thread {
 
     }
 
-    /**
-     * Sets the 'run' variable to false, causing the thread to stop on its next
-     * loop.
-     */
     public void stopThread(){
         this.run = false;
     }

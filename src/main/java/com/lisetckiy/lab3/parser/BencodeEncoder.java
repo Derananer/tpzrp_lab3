@@ -28,12 +28,6 @@ import java.io.*;
 import java.nio.*;
 import java.util.*;
 
-/**
- * A set of utility methods to encode a Map into a bencoded array of byte.
- * integer are represented as Long, String as byte[], dictionnaries as Map, and list as List.
- *
- * @author TdC_VgA
- */
 public class BencodeEncoder {
 
     public static byte[] encode(Map object) throws IOException {

@@ -279,8 +279,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
     /**
      * According to the message type, change the state of the task (peer) and
      * take the necessary actions
-     *
-     * @param m Message
      */
     public synchronized void messageReceived(Message m) {
         if (m == null) {
@@ -319,9 +317,7 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                      */
                     this.peer.setChoking(true);
                     this.isDownloading = false;
-
                     break;
-
                 case PeerProtocol.UNCHOKE:
                     /*
                      * Change the choking state to false, meaning this client now
@@ -335,52 +331,43 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                     } else
                         this.changeState(DOWNLOADING);
                     break;
-
-                case PeerProtocol.INTERESTED:
-                    /*
-                     * Change the interested state of the remote peer to true,
-                     * meaning this peer will start downloading from this client if
-                     * it is unchoked
-                     */
-                    this.peer.setInterested(true);
-                    break;
-
-                case PeerProtocol.NOT_INTERESTED:
-                    /*
-                     * Change the interested state of the remote peer to true,
-                     * meaning this peer will not start downloading from this client
-                     * if it is unchoked
-                     */
-
-                    this.peer.setInterested(false);
-                    break;
-
-                case PeerProtocol.HAVE:
-                    /*
-                     * Update the peer piece list with the piece described in this
-                     * message and advertise DownloadManager of the change
-                     */
-                    this.peer.setHasPiece(Utils.byteArrayToInt(message.getPayload()), true);
-                    this.firePeerAvailability(this.peer.toString(),
-                                              this.peer.getHasPiece()
-                                             );
-                    break;
-
+//                case PeerProtocol.INTERESTED:
+//                    /*
+//                     * Change the interested state of the remote peer to true,
+//                     * meaning this peer will start downloading from this client if
+//                     * it is unchoked
+//                     */
+//                    this.peer.setInterested(true);
+//                    break;
+//
+//                case PeerProtocol.NOT_INTERESTED:
+//                    /*
+//                     * Change the interested state of the remote peer to true,
+//                     * meaning this peer will not start downloading from this client
+//                     * if it is unchoked
+//                     */
+//
+//                    this.peer.setInterested(false);
+//                    break;
+//                case PeerProtocol.HAVE:
+//                    /*
+//                     * Update the peer piece list with the piece described in this
+//                     * message and advertise DownloadManager of the change
+//                     */
+//                    this.peer.setHasPiece(Utils.byteArrayToInt(message.getPayload()), true);
+//                    this.firePeerAvailability(this.peer.toString(), this.peer.getHasPiece());
+//                    break;
                 case PeerProtocol.BITFIELD:
                     /*
                      * Update the peer piece list with the piece described in this
                      * message and advertise DownloadManager of the change
                      */
                     this.peer.setHasPiece(message.getPayload());
-                    this.firePeerAvailability(this.peer.toString(),
-                                              this.peer.getHasPiece()
-                                             );
+                    this.firePeerAvailability(this.peer.toString(), this.peer.getHasPiece());
                     this.changeState(WAIT_UNCHOKE);
                     break;
-
-//                case PeerProtocol.REQUEST:
-//                    break;
-
+                case PeerProtocol.REQUEST:
+                    break;
                 case PeerProtocol.PIECE:
                     /**
                      * Sets the block of data downloaded in the piece block list and
@@ -396,11 +383,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
                         this.isDownloading = false;
                     this.changeState(this.DOWNLOADING);
                     break;
-
-//                case PeerProtocol.CANCEL:
-//                    break;
-//                case PeerProtocol.PORT:
-//                    break;
             }
             message = null;
         }
@@ -411,8 +393,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
      * Change the state of the task. State depends on the previously received messages
      * This is here that are taken the most important decisions about the messages to
      * be sent to the remote peer
-     *
-     * @param newState The new state of the download task
      */
     private synchronized void changeState(int newState) {
         int oldState = this.state;
@@ -486,9 +466,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
     /**
      * Fired to inform if the given piece is requested or not...
-     *
-     * @param piece     int
-     * @param requested boolean
      */
     private synchronized void firePieceRequested(int piece, boolean requested) {
         for (DTListener listener : getDTListeners()) {
@@ -498,9 +475,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
     /**
      * Fired to inform that the given piece has been completed or not
-     *
-     * @param piece    int
-     * @param complete boolean
      */
     private synchronized void firePieceCompleted(int piece, boolean complete) {
         for (DTListener listener : getDTListeners()) {
@@ -510,9 +484,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
     /**
      * Fired to inform that the task is finished for a certain reason
-     *
-     * @param id     String
-     * @param reason Reason why the task ended
      */
     private synchronized void fireTaskCompleted(String id, int reason) {
         this.end();
@@ -523,8 +494,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
     /**
      * Fired to inform that this task is ready to download
-     *
-     * @param id String
      */
     private synchronized void firePeerReady(String id) {
         for (DTListener listener : getDTListeners()) {
@@ -534,9 +503,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
 
     /**
      * Fired to inform that the availability of this peer has changed
-     *
-     * @param id       String
-     * @param hasPiece BitSet
      */
     private synchronized void firePeerAvailability(String id, BitSet hasPiece) {
         for (DTListener listener : getDTListeners()) {
@@ -547,9 +513,6 @@ public class DownloadTask extends Thread implements IncomingListener, OutgoingLi
     /**
      * Fired to inform that this task has completed the handshake and is now
      * ready to communicate with the remote peer
-     *
-     * @param id String
-     * @param dt DownloadTask
      */
     private synchronized void fireAddActiveTask(String id, DownloadTask dt) {
         for (DTListener listener : getDTListeners()) {

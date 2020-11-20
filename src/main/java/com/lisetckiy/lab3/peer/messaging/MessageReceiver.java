@@ -45,11 +45,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import javax.swing.event.EventListenerList;
 
-/**
- * Thread created to listen for incoming message from remote peers. When data is read,
- * message type is determined and a new Message object (either Message_HS or Message_PP)
- * is created and passed to the corresponding receiver
- */
 @Slf4j
 public class MessageReceiver extends Thread {
 
@@ -59,24 +54,13 @@ public class MessageReceiver extends Thread {
     private boolean hsOK = false;
     private final EventListenerList listeners = new EventListenerList();
 
-    /**
-     * Create a new Message receiver for a given peer
-     * @param id The id of the peer that has been assigned this receiver
-     * @param is InputStream
-     * @throws IOException
-     */
+
     public MessageReceiver(String id, InputStream is) throws IOException {
         this.setName("MR_" + id);
         this.is = is;
         this.dis = new DataInputStream(is);
     }
 
-    /**
-     * Reads bytes from the DataInputStream
-     * @param data byte[]
-     * @return int
-     *
-     */
     private int read(byte[] data){
         try{
             this.dis.readFully(data);

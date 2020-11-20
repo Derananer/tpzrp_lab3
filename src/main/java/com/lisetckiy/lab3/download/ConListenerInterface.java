@@ -43,7 +43,6 @@ import java.net.Socket;
 public interface ConListenerInterface extends EventListener{
     /**
      * Method called when a new connection is accepted and bound to the given socket
-     * @param s Socket
      */
-    public void connectionAccepted(Socket s);
+    void connectionAccepted(Socket s);
 }

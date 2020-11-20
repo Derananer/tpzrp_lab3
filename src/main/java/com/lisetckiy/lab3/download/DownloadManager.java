@@ -43,9 +43,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Create a new manager according to the given torrent and using the client id provided
-     *
-     * @param torrent  TorrentFile
-     * @param clientID byte[]
      */
     public DownloadManager(TorrentFile torrent, final byte[] clientID) {
         this.clientID = clientID;
@@ -104,11 +101,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
         return complete;
     }
 
-    /**
-     * Periodically call the unchokePeers method. This is an infinite loop.
-     * User have to exit with Ctrl+C, which is not good... Todo is change this
-     * method...
-     */
     public void blockUntilCompletion() {
         byte[] b = new byte[0];
 
@@ -116,7 +108,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
             try {
                 synchronized (b) {
                     b.wait(10000);
-//                    this.unchokePeers();
                     b.notifyAll();
                 }
             } catch (Exception e) {
@@ -125,12 +116,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
             if (this.isComplete())
                 log.info("\r\nSharing... Press Ctrl+C to stop client");
         }
-        /*
-                 new IOManager().readUserInput(
-                "\r\n*****************************************\r\n" +
-                "* Press ENTER to stop sharing the files *\r\n" +
-                "*****************************************");
-         */
     }
 
     /**
@@ -144,20 +129,12 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
         this.pu.start();
     }
 
-    /**
-     * Stop the tracker updates
-     */
     public void stopTrackerUpdate() {
         this.pu.end();
     }
 
     /**
      * Create the ConnectionListener to accept incoming connection from peers
-     *
-     * @param minPort The minimal port number this client should listen on
-     * @param maxPort The maximal port number this client should listen on
-     * @return True if the listening process is started, false else
-     * @todo Should it really be here? Better create it in the implementation
      */
     public boolean startListening(int minPort, int maxPort) {
         this.cl = new ConnectionListener();
@@ -185,9 +162,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
     /**
      * Check the existence of the files specified in the torrent and if necessary,
      * create them
-     *
-     * @return int
-     * @todo Should return an integer representing some error message...
      */
     public synchronized int checkTempFiles() {
         String saveas = Constants.SAVEPATH; // Should be configurable
@@ -208,8 +182,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Save a piece in the corresponding file(s)
-     *
-     * @param piece int
      */
     public synchronized void savePiece(int piece) {
         byte[] data = this.pieceList[piece].data();
@@ -231,8 +203,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Check if the current download is complete
-     *
-     * @return boolean
      */
     public synchronized boolean isComplete() {
         synchronized (this.isComplete) {
@@ -242,9 +212,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Check if the piece with the given index is complete and verified
-     *
-     * @param piece The piece index
-     * @return boolean
      */
     public synchronized boolean isPieceComplete(int piece) {
         synchronized (this.isComplete) {
@@ -254,9 +221,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Check if the piece with the given index is requested by a peer
-     *
-     * @param piece The piece index
-     * @return boolean
      */
     public synchronized boolean isPieceRequested(int piece) {
         synchronized (this.isRequested) {
@@ -266,9 +230,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Mark a piece as complete or not according to the parameters
-     *
-     * @param piece The index of the piece to be updated
-     * @param is    True if the piece is now complete, false otherwise
      */
     public synchronized void setComplete(int piece, boolean is) {
         synchronized (this.isComplete) {
@@ -278,9 +239,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Mark a piece as requested or not according to the parameters
-     *
-     * @param piece The index of the piece to be updated
-     * @param is    True if the piece is now requested, false otherwise
      */
 
     public synchronized void setRequested(int piece, boolean is) {
@@ -292,9 +250,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Returns the index of the piece that could be downloaded by the peer in parameter
-     *
-     * @param id The id of the peer that wants to download
-     * @return int The index of the piece to request
      */
     private synchronized int choosePiece2Download(String id) {
         synchronized (this.isComplete) {
@@ -324,9 +279,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
      * Removes a task and peer after the task sends a completion message.
      * Completion can be caused by an error (bad request, ...) or simply by the
      * end of the connection
-     *
-     * @param id     Task idendity
-     * @param reason Reason of the completion
      */
     public synchronized void taskCompleted(String id, int reason) {
         switch (reason) {
@@ -348,12 +300,8 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
      * Received when a piece has been fully downloaded by a task. The piece might
      * have been corrupted, in which case the manager will request it again later.
      * If it has been successfully downloaded and verified, the piece status is
-     * set to 'complete', a 'HAVE' message is sent to all connected peers and the
+     * set to 'complete', the
      * piece is saved into the corresponding file(s)
-     *
-     * @param peerID   String
-     * @param i        int
-     * @param complete boolean
      */
     public synchronized void pieceCompleted(String peerID, int i, boolean complete) {
         synchronized (this.isRequested) {
@@ -364,11 +312,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
                 pu.updateParameters(this.torrent.pieceLength, 0, "");
                 this.isComplete.set(i, complete);
                 float totaldl = (float) (((float) (100.0)) * ((float) (this.isComplete.cardinality())) / ((float) (this.nbPieces)));
-//                for (Iterator it = this.task.keySet().iterator(); it.hasNext(); )
-//                    try {
-//                        this.task.get(it.next()).ms.addMessageToQueue(new PeerProtocolMessage(PeerProtocol.HAVE, Utils.intToByteArray(i), 1));
-//                    } catch (NullPointerException npe) {
-//                    }
                 log.info("Piece completed by " + peerID + " : " + i + " (Total dl = " + totaldl + "% )");
                 this.savePiece(i);
             } else {
@@ -382,9 +325,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Set the status of the piece to requested or not
-     *
-     * @param i         int
-     * @param requested boolean
      */
     public synchronized void pieceRequested(int i, boolean requested) {
         this.isRequested.set(i, requested);
@@ -394,8 +334,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
      * Received when a task is ready to download or upload. In such a case, if
      * there is a piece that can be downloaded from the corresponding peer, then
      * request the piece
-     *
-     * @param peerID String
      */
     public synchronized void peerReady(String peerID) {
         int piece2request = this.choosePiece2Download(peerID);
@@ -405,9 +343,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Load piece data from the existing files
-     *
-     * @param piece int
-     * @return byte[]
      */
     public synchronized byte[] getPieceFromFiles(int piece) {
         byte[] data = new byte[this.pieceList[piece].getLength()];
@@ -432,9 +367,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Update the piece availabilities for a given peer
-     *
-     * @param peerID String
-     * @param has    BitSet
      */
     public synchronized void peerAvailability(String peerID, BitSet has) {
         this.peerAvailabilies.put(peerID, has);
@@ -463,8 +395,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
     /**
      * Given the list in parameter, check if the peers are already present in
      * the peer list. If not, then add them and create a new task for them
-     *
-     * @param list LinkedHashMap
      */
     public synchronized void updatePeerList(LinkedHashMap list) {
         synchronized (this.task) {
@@ -483,9 +413,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Called when an update try fail. At the moment, simply display a message
-     *
-     * @param error   int
-     * @param message String
      */
     public void updateFailed(int error, String message) {
         System.err.println(message);
@@ -494,9 +421,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Add the download task to the list of active (i.e. Handshake is ok) tasks
-     *
-     * @param id String
-     * @param dt DownloadTask
      */
     public synchronized void addActiveTask(String id, DownloadTask dt) {
         synchronized (this.task) {
@@ -507,8 +431,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
     /**
      * Called when a new peer connects to the client. Check if it is already
      * registered in the peer list, and if not, create a new DownloadTask for it
-     *
-     * @param socket Socket
      */
     public synchronized void connectionAccepted(Socket socket) {
         synchronized (this.task) {
@@ -525,8 +447,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener, ConListe
 
     /**
      * Compute the bitfield byte array from the isComplete BitSet
-     *
-     * @return byte[]
      */
     public byte[] getBitField() {
         int l = (int) Math.ceil((double) this.nbPieces / 8.0);

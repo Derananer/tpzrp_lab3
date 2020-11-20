@@ -29,9 +29,6 @@ public class TorrentFileBuilder {
 
     /**
      * Given the path of a torrent, parse the file and represent it as a Map
-     *
-     * @param filename String
-     * @return Map
      */
     private Map parseTorrentFile(String filename) {
         return this.parseTorrentFile(new File(filename));

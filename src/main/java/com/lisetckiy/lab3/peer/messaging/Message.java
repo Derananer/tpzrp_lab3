@@ -37,9 +37,6 @@
 
 package com.lisetckiy.lab3.peer.messaging;
 
-/**
- * Represent the general structure of a protocol message. It must have a type.
- */
 abstract public class Message {
     protected int type;
     private int priority = 0;

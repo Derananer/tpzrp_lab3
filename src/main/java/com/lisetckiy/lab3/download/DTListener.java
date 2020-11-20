@@ -37,21 +37,19 @@
 
 package com.lisetckiy.lab3.download;
 
-import java.util.EventListener;
 import java.util.BitSet;
+import java.util.EventListener;
 
-/**
- * Interface for managing events launched by the DownloadTask class
- *
- * @author Baptiste Dubuis
- * @version 0.1
- */
-public interface DTListener extends EventListener{
-    public void pieceCompleted(String peerID, int pieceNB, boolean complete);
-    public void pieceRequested(int pieceNB, boolean requested);
-    public void taskCompleted(String id, int reason);
-    public void peerAvailability(String id, BitSet hasPiece);
-    public void peerReady(String id);
-//    public void peerRequest(String peerID,int piece, int begin, int length);
-    public void addActiveTask(String id, DownloadTask dt);
+public interface DTListener extends EventListener {
+    void pieceCompleted(String peerID, int pieceNB, boolean complete);
+
+    void pieceRequested(int pieceNB, boolean requested);
+
+    void taskCompleted(String id, int reason);
+
+    void peerAvailability(String id, BitSet hasPiece);
+
+    void peerReady(String id);
+
+    void addActiveTask(String id, DownloadTask dt);
 }

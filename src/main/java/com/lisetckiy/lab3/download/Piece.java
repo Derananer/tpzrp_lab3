@@ -39,15 +39,9 @@ package com.lisetckiy.lab3.download;
 
 import com.lisetckiy.lab3.util.Utils;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.TreeMap;
 
-/**
- * Class representing a piece according to bittorrent definition.
- * The piece is a part of data of the target file(s)
- *
- * @author Baptiste Dubuis
- * @version 0.1
- */
 public class Piece {
 
     private TreeMap<Integer, Integer> filesAndoffset;
@@ -69,73 +63,69 @@ public class Piece {
      */
     byte[] sha1;
 
-    public Piece(int index, int length, int blockSize, byte[] sha1){
+    public Piece(int index, int length, int blockSize, byte[] sha1) {
         this(index, length, blockSize, sha1, null);
     }
 
     /**
      * Constructor of a Piece
-     * @param index Index of the piece
-     * @param length Length of the piece
+     *
+     * @param index     Index of the piece
+     * @param length    Length of the piece
      * @param blockSize Size of a block of data
-     * @param sha1 SHA1 hash that must be verified at the end of download
-     * @param m HashTable containing the file(s) this piece belongs to and the index in these
+     * @param sha1      SHA1 hash that must be verified at the end of download
+     * @param m         HashTable containing the file(s) this piece belongs to and the index in these
      */
     public Piece(int index, int length, int blockSize, byte[] sha1, TreeMap<Integer, Integer> m) {
         this.index = index;
         this.length = length;
         this.pieceBlock = new TreeMap<>();
         this.sha1 = sha1;
-        if(m != null)
+        if (m != null)
             this.filesAndoffset = m;
         else
             this.filesAndoffset = new TreeMap<>();
     }
 
-    public void clearData(){
+    public void clearData() {
         this.pieceBlock.clear();
     }
 
-//    public void setFileAndOffset(int file, int offset){
-//        this.filesAndoffset.put(file, offset);
-//    }
 
-    public TreeMap getFileAndOffset(){
+    public TreeMap getFileAndOffset() {
         return this.filesAndoffset;
     }
 
     /**
      * Return the index of the piece
-     * @return int
      */
-    public synchronized int getIndex(){
+    public synchronized int getIndex() {
         return this.index;
     }
 
     /**
      * Returns the length of the piece
-     * @return int
      */
-    public synchronized int getLength(){
+    public synchronized int getLength() {
         return this.length;
     }
 
     /**
      * Set a block of data at the corresponding offset
+     *
      * @param offset Offset of the data within the current piece
-     * @param data Data to be set at the given offset
+     * @param data   Data to be set at the given offset
      */
-    public synchronized void setBlock(int offset, byte[] data){
+    public synchronized void setBlock(int offset, byte[] data) {
         this.pieceBlock.put(offset, data);
     }
 
     /**
      * Returns the concatenated value of the pieceBlock map. This represent the piece data
-     * @return byte[]
      */
-    public synchronized byte[] data(){
+    public synchronized byte[] data() {
         byte[] data = new byte[0];
-        for(Iterator it = this.pieceBlock.keySet().iterator(); it.hasNext();)
+        for (Iterator it = this.pieceBlock.keySet().iterator(); it.hasNext(); )
             data = Utils.concat(data, this.pieceBlock.get(it.next()));
         return data;
     }
@@ -143,25 +133,20 @@ public class Piece {
     /**
      * Verify if the downloaded data corresponds to the original data contained in the torrent
      * by comparing it to the SHA1 hash in the torrent
-     * @return boolean
      */
-    public synchronized boolean verify(){
+    public synchronized boolean verify() {
         return Utils.byteArrayToByteString(Utils.hash(this.data())).matches(Utils.byteArrayToByteString(this.sha1));
     }
 
-    /**
-     * Print some information about the Piece
-     * @return String
-     */
-    public synchronized String toString(){
+    public synchronized String toString() {
         String s = "";
         s += "Piece " + this.index + "[" + this.length + "Bytes], part of file";
-        if(this.filesAndoffset.size() > 1)
+        if (this.filesAndoffset.size() > 1)
             s += "s";
-        for(Iterator it = this.filesAndoffset.keySet().iterator(); it.hasNext();){
-            int key = ((Integer)(it.next())).intValue();
-            s += " " + key + " [offset = " + this.filesAndoffset.get(key)+"]";
-            if(it.hasNext())
+        for (Iterator it = this.filesAndoffset.keySet().iterator(); it.hasNext(); ) {
+            int key = ((Integer) (it.next())).intValue();
+            s += " " + key + " [offset = " + this.filesAndoffset.get(key) + "]";
+            if (it.hasNext())
                 s += " and";
         }
         return s;

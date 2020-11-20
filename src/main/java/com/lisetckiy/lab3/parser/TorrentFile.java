@@ -28,9 +28,6 @@ public class TorrentFile {
     public ArrayList piece_hash_values_as_hex;
     public ArrayList piece_hash_values_as_url;
 
-    /**
-     * Create the TorrentFile object and initiate its instance variables
-     */
     public TorrentFile() {
         super();
         announceURL = new String();

@@ -60,34 +60,30 @@ public class ConnectionListener extends Thread {
     private final EventListenerList listeners = new EventListenerList();
     private boolean acceptConnection = true;
 
-    public ConnectionListener() {}
+    public ConnectionListener() {
+    }
 
-    /**
-     * Returns the port this client is listening on
-     * @return int
-     */
-    public int getConnectedPort(){
+
+    public int getConnectedPort() {
         return this.connectedPort;
     }
 
     /**
      * Try to create a server socket for remote peers to connect on within the
      * specified port range
-     * @param minPort The minimal port number this client should listen on
-     * @param maxPort The maximal port number this client should listen on
-     * @return boolean
      */
-    public boolean connect(int minPort, int maxPort){
+    public boolean connect(int minPort, int maxPort) {
         this.minPort = minPort;
         this.maxPort = maxPort;
-        for(int i = minPort; i <= maxPort; i++)
+        for (int i = minPort; i <= maxPort; i++)
             try {
                 this.ss = new ServerSocket(i);
                 this.connectedPort = i;
                 this.setDaemon(true);
                 this.start();
                 return true;
-            } catch (IOException ioe) {}
+            } catch (IOException ioe) {
+            }
         return false;
     }
 
@@ -95,21 +91,20 @@ public class ConnectionListener extends Thread {
         byte[] b = new byte[0];
         try {
             while (true) {
-                if(this.acceptConnection){
+                if (this.acceptConnection) {
                     this.fireConnectionAccepted(ss.accept());
                     sleep(1000);
-                }else{
-                    synchronized(b){
+                } else {
+                    synchronized (b) {
                         log.info("No more connection accepted for the moment...");
                         b.wait();
                     }
                 }
             }
         } catch (IOException ioe) {
-            System.err.println("Error in connection listener: "+ioe.getMessage());
-            System.err.flush();
-        } catch(InterruptedException ie){
-
+            log.error("Error in connection listener: " + ioe.getMessage(), ioe);
+        } catch (InterruptedException ie) {
+            log.error("Error in connection listener: " + ie.getMessage(), ie);
         }
     }
 

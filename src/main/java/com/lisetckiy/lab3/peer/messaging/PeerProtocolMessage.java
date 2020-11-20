@@ -41,14 +41,7 @@ import com.lisetckiy.lab3.peer.Bits;
 import com.lisetckiy.lab3.peer.PeerProtocol;
 import com.lisetckiy.lab3.util.Utils;
 
-/**
- *
- * Represent a Peer Protocol message according to Bittorrent protocol specifications.
- * This message format depends on its identity, so refer to Bittorrent specifications for further information
- *
- * @author Baptiste Dubuis
- * @version 0.1
- */
+
 public class PeerProtocolMessage extends Message {
     private byte[] length = new byte[4];
     private byte[] id = new byte[1];
