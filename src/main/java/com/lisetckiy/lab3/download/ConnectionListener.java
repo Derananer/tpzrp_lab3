@@ -37,20 +37,14 @@
 
 package com.lisetckiy.lab3.download;
 
-import com.lisetckiy.lab3.download.ConListenerInterface;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.event.EventListenerList;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import javax.swing.event.EventListenerList;
 
-/**
- * Thread that can listen for remote peers connection tries to this client
- *
- * @author Baptiste Dubuis
- * @version 0.1
- */
+
 @Slf4j
 public class ConnectionListener extends Thread {
     private ServerSocket ss = null;

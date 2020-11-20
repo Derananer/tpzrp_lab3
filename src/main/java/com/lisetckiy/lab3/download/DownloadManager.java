@@ -1,16 +1,14 @@
 package com.lisetckiy.lab3.download;
 
-import com.lisetckiy.lab3.util.Constants;
 import com.lisetckiy.lab3.parser.TorrentFile;
 import com.lisetckiy.lab3.peer.Peer;
 import com.lisetckiy.lab3.peer.PeerProtocol;
 import com.lisetckiy.lab3.peer.PeerUpdater;
 import com.lisetckiy.lab3.peer.messaging.PeerProtocolMessage;
-import com.lisetckiy.lab3.util.Utils;
+import com.lisetckiy.lab3.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.Socket;
